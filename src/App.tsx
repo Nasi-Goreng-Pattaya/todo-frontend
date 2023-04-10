@@ -1,20 +1,22 @@
 import { Routes, Route, Link } from "react-router-dom";
-import { Container, Header, Content, Navbar, Nav, FlexboxGrid } from "rsuite";
+import { Navbar, Nav, FlexboxGrid } from "rsuite";
 import { BsFillPatchCheckFill, BsPersonFill } from "react-icons/bs";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Statistics from "./pages/Statistics";
+import Style from "./styles/App.module.css";
 
 function App() {
   return (
-    <Container>
-      <Header>
+    <div className={Style["wrapper"]}>
+      <header className={Style["header"]}>
         <Navbar appearance="inverse">
           <Navbar.Brand as={Link} to="/">
             <FlexboxGrid align="middle">
               <BsFillPatchCheckFill
-                style={{ color: "#fff", marginRight: "10px" }}
+                className={`${Style["white-color"]} ${Style["mr-10"]}`}
               />
-              <p style={{ color: "#fff" }}>Todo</p>
+              <p className={Style["white-color"]}>Todo</p>
             </FlexboxGrid>
           </Navbar.Brand>
           <Nav>
@@ -39,17 +41,17 @@ function App() {
             </Nav.Menu>
           </Nav>
         </Navbar>
-      </Header>
-      <Content>
+      </header>
+      <main className={Style["content-wrapper"]}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          {/* <Route path="/register" element={<Register />} />
           <Route path="/statistics" element={<Statistics />} />
+          {/* <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile />} /> */}
         </Routes>
-      </Content>
-    </Container>
+      </main>
+    </div>
   );
 }
 

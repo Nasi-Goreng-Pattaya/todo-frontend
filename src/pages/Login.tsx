@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Button,
   ButtonToolbar,
@@ -85,7 +86,9 @@ const Login = () => {
               style={{ marginTop: "10px" }}
             >
               <p>Don't have an account?</p>
-              <Button appearance="link">Register</Button>
+              <Button as={Link} appearance="link" to="/register">
+                Register
+              </Button>
             </FlexboxGrid>
           </FlexboxGrid.Item>
         </FlexboxGrid>

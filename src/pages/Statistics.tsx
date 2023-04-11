@@ -1,11 +1,11 @@
-import { Col, FlexboxGrid, Panel, Placeholder } from "rsuite";
-import { useState, useEffect } from "react";
-import { BsPieChartFill, BsBarChartFill } from "react-icons/bs";
+import { BarChart, Bars, Line, LineChart, PieChart } from "@rsuite/charts";
+import { useEffect, useState } from "react";
+import { BsBarChartFill, BsPieChartFill } from "react-icons/bs";
 import { MdTimeline } from "react-icons/md";
+import { Col, FlexboxGrid, Panel, Placeholder } from "rsuite";
 import { TabBar } from "../components/Tab/TabBar";
-import { TabPage } from "../components/Tab/TabPage";
 import { TabItem } from "../components/Tab/TabItem";
-import { PieChart, LineChart, Line, BarChart, Bars } from "@rsuite/charts";
+import { TabPage } from "../components/Tab/TabPage";
 
 // mock data for tasks
 const tasks: Task[] = [
@@ -276,21 +276,29 @@ const getTimelineData = (tasks: Task[]) => {
 };
 
 const Statistics = () => {
+  type GraphDataType = {
+    pieData: Array<[string, number]>;
+    barLastWeekData: Array<[string, number]>;
+    barLastThreeMonthsData: BarLastThreeMonthsDataType;
+    timelineData: Array<[string, number]>;
+  };
+
   const [active, setActive] = useState("pie"); // pie | bar | line
   const [isGraphDataLoading, setIsGraphDataLoading] = useState(true);
-  const [pieData, setPieData] = useState<Array<[string, number]>>([]);
-  const [barLastWeekData, setBarLastWeekData] = useState<
-    Array<[string, number]>
-  >([]);
-  const [barLastThreeMonthsData, setBarLastThreeMonthsData] =
-    useState<BarLastThreeMonthsDataType>({ categories: [], data: [] });
-  const [timelineData, setTimelineData] = useState<Array<[string, number]>>([]);
+  const [graphData, setGraphData] = useState<GraphDataType>({
+    pieData: [],
+    barLastWeekData: [],
+    barLastThreeMonthsData: { categories: [], data: [] },
+    timelineData: [],
+  });
 
   useEffect(() => {
-    setPieData(getPieData(tasks));
-    setBarLastWeekData(getBarLastWeekData(tasks));
-    setBarLastThreeMonthsData(getBarLastThreeMonthsData(tasks));
-    setTimelineData(getTimelineData(tasks));
+    setGraphData({
+      pieData: getPieData(tasks),
+      barLastWeekData: getBarLastWeekData(tasks),
+      barLastThreeMonthsData: getBarLastThreeMonthsData(tasks),
+      timelineData: getTimelineData(tasks),
+    });
     setIsGraphDataLoading(false);
   }, []);
 
@@ -332,7 +340,7 @@ const Statistics = () => {
                   name={"Task Category Distribution"}
                   legend={false}
                   donut
-                  data={pieData}
+                  data={graphData.pieData}
                   startAngle={210}
                 />
               )}
@@ -343,17 +351,22 @@ const Statistics = () => {
               {isGraphDataLoading ? (
                 <Placeholder.Graph active />
               ) : (
-                <BarChart name={"Task Completed"} data={barLastWeekData} />
+                <BarChart
+                  name={"Task Completed"}
+                  data={graphData.barLastWeekData}
+                />
               )}
             </Panel>
             <Panel header="Last 3 Months' Productivity">
               {isGraphDataLoading ? (
                 <Placeholder.Graph active />
               ) : (
-                <BarChart data={barLastThreeMonthsData.data}>
-                  {barLastThreeMonthsData.categories.map((category) => (
-                    <Bars name={category} />
-                  ))}
+                <BarChart data={graphData.barLastThreeMonthsData.data}>
+                  {graphData.barLastThreeMonthsData.categories.map(
+                    (category) => (
+                      <Bars name={category} />
+                    )
+                  )}
                 </BarChart>
               )}
             </Panel>
@@ -363,7 +376,7 @@ const Statistics = () => {
               {isGraphDataLoading ? (
                 <Placeholder.Graph active />
               ) : (
-                <LineChart data={timelineData}>
+                <LineChart data={graphData.timelineData}>
                   <Line name={"Tasks Completed"} area />
                 </LineChart>
               )}

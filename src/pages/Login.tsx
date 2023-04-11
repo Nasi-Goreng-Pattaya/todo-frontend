@@ -4,13 +4,12 @@ import {
   Button,
   ButtonToolbar,
   Col,
-  Container,
-  Content,
   FlexboxGrid,
   Form,
   Panel,
   Schema,
 } from "rsuite";
+import Style from "../styles/Login.module.css";
 
 const { StringType } = Schema.Types;
 const model = Schema.Model({
@@ -36,64 +35,52 @@ const Login = () => {
     // navigate to the main page
   };
   return (
-    <Container>
-      <Content>
-        <FlexboxGrid
-          justify="center"
-          align="middle"
-          style={{ height: "100vh" }}
-        >
-          <FlexboxGrid.Item as={Col} md={15} lg={12} xl={9} colspan={21}>
-            <Panel header={<h3>Login</h3>} bordered>
-              <Form fluid model={model} onSubmit={handleOnSubmit}>
-                <Form.Group controlId="email">
-                  <Form.ControlLabel>Email address</Form.ControlLabel>
-                  <Form.Control name="email" />
-                  <Form.ErrorMessage />
-                </Form.Group>
-                <Form.Group controlId="password">
-                  <Form.ControlLabel>Password</Form.ControlLabel>
-                  <Form.Control
-                    name="password"
-                    type="password"
-                    autoComplete="off"
-                  />
-                </Form.Group>
-                <Form.Group>
-                  <ButtonToolbar>
-                    <Button
-                      type="submit"
-                      appearance="primary"
-                      block
-                      loading={isLoading}
-                    >
-                      Login
-                    </Button>
-                  </ButtonToolbar>
-                  <FlexboxGrid
-                    justify="end"
-                    align="middle"
-                    style={{ marginTop: "10px" }}
-                  >
-                    <Button appearance="link">Forgot password?</Button>
-                  </FlexboxGrid>
-                </Form.Group>
-              </Form>
-            </Panel>
-            <FlexboxGrid
-              justify="center"
-              align="middle"
-              style={{ marginTop: "10px" }}
-            >
-              <p>Don't have an account?</p>
-              <Button as={Link} appearance="link" to="/register">
-                Register
-              </Button>
-            </FlexboxGrid>
-          </FlexboxGrid.Item>
+    <FlexboxGrid justify="center">
+      <FlexboxGrid.Item as={Col} md={15} lg={12} xl={9} colspan={21}>
+        <Panel header={<h3>Login</h3>} bordered>
+          <Form fluid model={model} onSubmit={handleOnSubmit}>
+            <Form.Group controlId="email">
+              <Form.ControlLabel>Email address</Form.ControlLabel>
+              <Form.Control name="email" />
+              <Form.ErrorMessage />
+            </Form.Group>
+            <Form.Group controlId="password">
+              <Form.ControlLabel>Password</Form.ControlLabel>
+              <Form.Control
+                name="password"
+                type="password"
+                autoComplete="off"
+              />
+            </Form.Group>
+            <Form.Group>
+              <ButtonToolbar>
+                <Button
+                  type="submit"
+                  appearance="primary"
+                  block
+                  loading={isLoading}
+                >
+                  Login
+                </Button>
+              </ButtonToolbar>
+              <FlexboxGrid
+                justify="end"
+                align="middle"
+                className={Style["mt-10"]}
+              >
+                <Button appearance="link">Forgot password?</Button>
+              </FlexboxGrid>
+            </Form.Group>
+          </Form>
+        </Panel>
+        <FlexboxGrid justify="center" align="middle" className={Style["mt-10"]}>
+          <p>Don't have an account?</p>
+          <Button as={Link} appearance="link" to="/register">
+            Register
+          </Button>
         </FlexboxGrid>
-      </Content>
-    </Container>
+      </FlexboxGrid.Item>
+    </FlexboxGrid>
   );
 };
 

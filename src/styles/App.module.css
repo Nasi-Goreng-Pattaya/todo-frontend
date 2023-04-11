@@ -1,0 +1,21 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  height: 56px;
+}
+
+.content-wrapper {
+  min-height: calc(100vh - 56px);
+  padding: 50px 0px;
+}
+
+.white-color {
+  color: white;
+}
+
+.mr-10 {
+  margin-right: 10px;
+}

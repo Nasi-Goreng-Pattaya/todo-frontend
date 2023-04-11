@@ -35,7 +35,7 @@ const Login = () => {
     // navigate to the main page
   };
   return (
-    <FlexboxGrid justify="center" className={Style["wrapper"]}>
+    <FlexboxGrid justify="center">
       <FlexboxGrid.Item as={Col} md={15} lg={12} xl={9} colspan={21}>
         <Panel header={<h3>Login</h3>} bordered>
           <Form fluid model={model} onSubmit={handleOnSubmit}>

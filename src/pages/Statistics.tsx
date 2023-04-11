@@ -323,7 +323,7 @@ const Statistics = () => {
 
   return (
     <FlexboxGrid justify="center">
-      <Col xs={23} md={23} lg={22}>
+      <Col xs={23} md={22} lg={20} xl={16}>
         <Panel bordered>
           <TabBar
             tabItems={tabItems}

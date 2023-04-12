@@ -2,20 +2,20 @@ import { BarChart, Bars, Line, LineChart, PieChart } from "@rsuite/charts";
 import { useEffect, useState } from "react";
 import { BsBarChartFill, BsPieChartFill } from "react-icons/bs";
 import { MdTimeline } from "react-icons/md";
-import { Col, FlexboxGrid, Panel, Placeholder } from "rsuite";
+import { Col, FlexboxGrid, Panel } from "rsuite";
 import { TabBar } from "../components/Tab/TabBar";
 import { TabItem } from "../components/Tab/TabItem";
 import { TabPage } from "../components/Tab/TabPage";
 
 // function to prepare data for pie charts
-const getPieData = (tasks: Task[]): Array<[string, number]> => {
+const getPieData = (tasks: Task[]): Array<any> => {
   // count the available categories in a map-like structure
   const map: Map<string, number> = new Map();
   for (const { category } of tasks) {
     map.set(category, (map.get(category) || 0) + 1);
   }
   // create pieData array that is required by PieChart
-  const pieData: Array<[string, number]> = [];
+  const pieData: Array<any> = [];
   for (const [key, value] of map) {
     pieData.push([key, Number(((value / tasks.length) * 100).toFixed(2))]);
   }
@@ -132,7 +132,7 @@ const getTimelineData = (tasks: Task[]) => {
 
 const Statistics = ({ tasks }: { tasks: Task[] }) => {
   type GraphDataType = {
-    pieData: Array<[string, number]>;
+    pieData: Array<any>;
     barLastWeekData: Array<[string, number]>;
     barLastThreeMonthsData: BarLastThreeMonthsDataType;
     timelineData: Array<[string, number]>;
@@ -188,53 +188,53 @@ const Statistics = ({ tasks }: { tasks: Task[] }) => {
           />
           <TabPage activeTab={active} tabKey="pie">
             <Panel header="Task Category Distribution">
-              {isGraphDataLoading ? (
-                <Placeholder.Graph active />
-              ) : (
+              {
                 <PieChart
+                  loading={isGraphDataLoading}
                   name={"Task Category Distribution"}
                   legend={false}
                   donut
                   data={graphData.pieData}
                   startAngle={210}
                 />
-              )}
+              }
             </Panel>
           </TabPage>
           <TabPage activeTab={active} tabKey="bar">
             <Panel header="Last Week's Productivity">
-              {isGraphDataLoading ? (
-                <Placeholder.Graph active />
-              ) : (
+              {
                 <BarChart
+                  loading={isGraphDataLoading}
                   name={"Task Completed"}
                   data={graphData.barLastWeekData}
                 />
-              )}
+              }
             </Panel>
             <Panel header="Last 3 Months' Productivity">
-              {isGraphDataLoading ? (
-                <Placeholder.Graph active />
-              ) : (
-                <BarChart data={graphData.barLastThreeMonthsData.data}>
+              {
+                <BarChart
+                  loading={isGraphDataLoading}
+                  data={graphData.barLastThreeMonthsData.data}
+                >
                   {graphData.barLastThreeMonthsData.categories.map(
                     (category) => (
                       <Bars name={category} />
                     )
                   )}
                 </BarChart>
-              )}
+              }
             </Panel>
           </TabPage>
           <TabPage activeTab={active} tabKey="line">
             <Panel header="Productivity Trend Over Time">
-              {isGraphDataLoading ? (
-                <Placeholder.Graph active />
-              ) : (
-                <LineChart data={graphData.timelineData}>
+              {
+                <LineChart
+                  loading={isGraphDataLoading}
+                  data={graphData.timelineData}
+                >
                   <Line name={"Tasks Completed"} area />
                 </LineChart>
-              )}
+              }
             </Panel>
           </TabPage>
         </Panel>

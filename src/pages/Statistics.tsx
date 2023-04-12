@@ -50,7 +50,7 @@ const getBarLastWeekData = (tasks: Task[]): Array<[string, number]> => {
 
 type BarLastThreeMonthsDataType = {
   categories: Array<string>;
-  data: Array<Array<string | number>>;
+  data: [category: string, ...values: number[]][];
 };
 
 const getBarLastThreeMonthsData = (
@@ -88,11 +88,13 @@ const getBarLastThreeMonthsData = (
     monthMap.set(monthName, monthMapValue);
   }
   // create barData array that is required by bar chart
-  const barLastThreeMonthsData: Array<Array<string | number>> = [];
+  const barLastThreeMonthsData: [category: string, ...values: number[]][] = [];
   for (const [monthName, categoryMapForTheMonth] of monthMap) {
-    const dataForTheMonth: Array<string | number> = Array(
-      categoryMap.size + 1
-    ).fill(0);
+    const dataForTheMonth: [category: string, ...values: number[]] =
+      Array<unknown>(categoryMap.size + 1).fill(0) as [
+        category: string,
+        ...values: number[]
+      ];
     dataForTheMonth[0] = monthName;
     for (const [key, value] of categoryMapForTheMonth) {
       dataForTheMonth[categoryMap.get(key)!] = value;
@@ -128,7 +130,7 @@ const getTimelineData = (tasks: Task[]) => {
   return timelineData;
 };
 
-const Statistics = ({tasks}: {tasks: Task[]}) => {
+const Statistics = ({ tasks }: { tasks: Task[] }) => {
   type GraphDataType = {
     pieData: Array<[string, number]>;
     barLastWeekData: Array<[string, number]>;

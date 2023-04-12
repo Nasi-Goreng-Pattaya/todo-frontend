@@ -30,6 +30,9 @@ const Login = () => {
     event.preventDefault();
     if (!passValidation) return;
     setIsLoading(true);
+    const formData = new FormData(event.currentTarget);
+    const emailProvidedByUser: string = formData.get("email") as string;
+    const passwordProvidedByUser: string = formData.get("password") as string;
     // todo perform login operation
     // after validating the user setIsLoading(false);
     // navigate to the main page

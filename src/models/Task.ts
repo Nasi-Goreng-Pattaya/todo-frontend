@@ -1,6 +1,6 @@
 type Task = {
-  priority: 1 | 2 | 3;
-  hasReminder: 0 | 1;
+  priority: "low" | "medium" | "high";
+  hasReminder: boolean;
   reminderDateTime: Date | null;
   createdDateTime: Date;
   title: string;
@@ -8,6 +8,6 @@ type Task = {
   content: string;
   category: string;
   dueDateTime: Date;
-  isCompleted: 0 | 1;
+  isCompleted: boolean;
   completedDateTime: Date | null;
 };

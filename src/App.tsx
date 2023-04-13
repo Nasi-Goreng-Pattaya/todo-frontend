@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Statistics from "./pages/Statistics";
 import Style from "./styles/App.module.css";
+import { Register } from "./pages/Register";
 
 // mock data for tasks
 const tasks: Task[] = [
@@ -194,7 +195,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/statistics" element={<Statistics tasks={tasks} />} />
-          {/* <Route path="/register" element={<Register />} />
+          <Route path="/register" element={<Register />} />
+          {/*
           <Route path="/profile" element={<Profile />} /> */}
         </Routes>
       </main>

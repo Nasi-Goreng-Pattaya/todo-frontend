@@ -5,6 +5,8 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Statistics from "./pages/Statistics";
 import Style from "./styles/App.module.css";
+import Tasks from "./pages/Tasks";
+import Profile from "./pages/Profile";
 
 // mock data for tasks
 const tasks: Task[] = [
@@ -170,6 +172,9 @@ function App() {
             <Nav.Item as={Link} to={"/"}>
               Home
             </Nav.Item>
+            <Nav.Item as={Link} to={"/tasks"}>
+              Tasks
+            </Nav.Item>
             <Nav.Item as={Link} to={"/statistics"}>
               Statistics
             </Nav.Item>
@@ -193,9 +198,10 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/tasks" element={<Tasks />} />
           <Route path="/statistics" element={<Statistics tasks={tasks} />} />
-          {/* <Route path="/register" element={<Register />} />
-          <Route path="/profile" element={<Profile />} /> */}
+          {/* <Route path="/register" element={<Register />} /> */}
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </main>
     </div>

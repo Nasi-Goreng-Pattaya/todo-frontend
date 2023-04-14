@@ -63,7 +63,7 @@ export function Register() {
                   block
                   loading={false}
                 >
-                  Login
+                  Register
                 </Button>
               </ButtonToolbar>
             </Form.Group>

@@ -1,4 +1,4 @@
-import { Col, Row, FlexboxGrid, Button, Nav, Panel } from "rsuite";
+import { Col, Row, FlexboxGrid, Button, Nav, Panel, Tag } from "rsuite";
 import Style from "../styles/Tasks.module.css";
 import {
   FaPlus,
@@ -8,8 +8,13 @@ import {
   FaChartPie,
 } from "react-icons/fa";
 import { BiCategory } from "react-icons/bi";
-import { useState } from "react";
+import { FiPlay } from "react-icons/fi";
+import { MdDoneOutline, MdCloudDone } from "react-icons/md";
+import { useEffect, useState } from "react";
+import AddTaskModal from "../components/Modal/AddTaskModal";
+import mockTasksData from "../data";
 
+// empty task list alert section
 const EmptyTasksList = ({ active }: { active: string }) => {
   return (
     <Panel className={Style["no-task-panel"]}>
@@ -24,15 +29,79 @@ const EmptyTasksList = ({ active }: { active: string }) => {
   );
 };
 
+//single task row in list
+const SingleTask = ({ task, active }: { task: Task; active: string }) => {
+  const date = task.dueDateTime;
+  // const date = new Date();
+  const dateString = `
+    ${date.getDate()}/${date.getMonth()}/${date.getFullYear()} ${date.getHours()}:${
+    date.getMinutes() / 10 === 0 ? "0" + date.getMinutes() : date.getMinutes()
+  }`;
+
+  return (
+    <Row className={Style["single-task"]}>
+      <Col xs={6} sm={7} md={8} lg={9} xl={10} xxl={12} id={Style["task-name"]}>
+        {task.title}
+      </Col>
+      <Col className={Style["list-sm-col"]}>{task.progress}%</Col>
+      <Col className={Style["list-sm-col"]} id={Style["due-date-col"]}>
+        {dateString}
+      </Col>
+      <Col className={Style["list-sm-col"]}>
+        <Tag size="lg">{task.category}</Tag>
+      </Col>
+      <Col className={Style["list-sm-col"]} id={Style["task-priority"]}>
+        {task.priority === "high" ? (
+          <Tag size="lg" color="red">
+            High
+          </Tag>
+        ) : task.priority === "medium" ? (
+          <Tag size="lg" color="yellow">
+            Medium
+          </Tag>
+        ) : (
+          <Tag size="lg" color="green">
+            Low
+          </Tag>
+        )}
+      </Col>
+      <Col className={Style["task-btn"]}>
+        {active === "toDo" ? (
+          <FiPlay className={Style["btn-shake-green"]} />
+        ) : active === "inProgress" ? (
+          <MdDoneOutline className={Style["btn-shake-green"]} />
+        ) : (
+          <MdCloudDone className={Style["green"]} />
+        )}
+      </Col>
+    </Row>
+  );
+};
+
+// page
 const Tasks = () => {
   const [active, setActive] = useState("toDo");
+  const [openModal, setOpenModal] = useState(false);
+  const [tasks, setTasks] = useState<Task[]>([]);
 
-  const handleAddTaskButton = () => {
-    // TODO prompt add task modal
-  };
+  useEffect(() => {
+    // TODO: fetch tasks list from backend API
+    setTasks(mockTasksData);
+  }, []);
+
+  const filteredTask = tasks.filter((task) => {
+    if (active === "toDo") {
+      return task.progress === 0;
+    } else if (active === "inProgress") {
+      return task.progress > 0 && task.progress < 100;
+    } else if (active === "completed") {
+      return task.progress === 100;
+    }
+  });
 
   return (
     <FlexboxGrid justify="center">
+      <AddTaskModal open={openModal} setOpenModal={setOpenModal} />
       <Col
         xs={23}
         md={21}
@@ -42,13 +111,13 @@ const Tasks = () => {
       >
         <Row className={Style["title-row"]}>
           <Col xs={24}>
-            <h3>Task List</h3>
+            <h3>Tasks List</h3>
           </Col>
           <Col>
             <Button
               className={Style["add-task-btn"]}
               startIcon={<FaPlus />}
-              onClick={() => handleAddTaskButton()}
+              onClick={() => setOpenModal(true)}
             >
               Add Task
             </Button>
@@ -81,7 +150,7 @@ const Tasks = () => {
             <FaChartPie />
             Progress
           </Col>
-          <Col className={Style["list-sm-col"]}>
+          <Col className={Style["list-sm-col"]} id={Style["due-date-col"]}>
             <FaRegCalendarAlt />
             Due Date
           </Col>
@@ -93,9 +162,15 @@ const Tasks = () => {
             <FaRegArrowAltCircleDown />
             Priority
           </Col>
-          {/* <Col style={{ width: "40px", background: "red" }}>.</Col> */}
+          {/* <Col style={{ width: "35px", background: "red" }}>.</Col> */}
         </Row>
-        <EmptyTasksList active={active} />
+        {filteredTask.length === 0 ? (
+          <EmptyTasksList active={active} />
+        ) : (
+          filteredTask.map((task, i) => {
+            return <SingleTask task={task} key={i} active={active} />;
+          })
+        )}
       </Col>
     </FlexboxGrid>
   );

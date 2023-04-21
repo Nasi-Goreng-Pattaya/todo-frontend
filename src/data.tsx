@@ -1,6 +1,6 @@
 //example data
 
-const tasks: Task[] = [
+const mockTasksData: Task[] = [
   {
     priority: "low",
     hasReminder: true,
@@ -111,7 +111,7 @@ const tasks: Task[] = [
     reminderDateTime: new Date(),
     createdDateTime: new Date(),
     title: "Take out the trash",
-    progress: 0,
+    progress: 10,
     content: "Take out the trash and recycle",
     category: "Personal",
     dueDateTime: new Date("2023-04-12T23:59:59"),
@@ -146,4 +146,4 @@ const tasks: Task[] = [
   },
 ];
 
-export default tasks;
+export default mockTasksData;

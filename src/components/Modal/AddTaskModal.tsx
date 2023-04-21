@@ -4,7 +4,6 @@ import {
   Modal,
   Form,
   Input,
-  InputProps,
   SelectPicker,
   Radio,
   RadioGroup,
@@ -68,6 +67,14 @@ const AddTaskModal = ({
     // TODO: add new task to database
 
     setOpenModal(false);
+    setFormValue({
+      title: "",
+      category: "",
+      priority: "",
+      content: "",
+      hasReminder: false,
+      dueDateTime: new Date(),
+    });
   };
 
   const styles: { [x: string]: React.CSSProperties } = {
@@ -136,7 +143,12 @@ const AddTaskModal = ({
                   inline
                   name="priority"
                   accepter={RadioGroup}
-                  onChange={(value) => setValue("priority", value)}
+                  onChange={(value) => {
+                    if (value === "Low") {
+                      setValue("hasReminder", false);
+                    }
+                    setValue("priority", value);
+                  }}
                 >
                   <Radio value="Low">Low</Radio>
                   <Radio value="Medium">Medium</Radio>
@@ -144,13 +156,22 @@ const AddTaskModal = ({
                 </Form.Control>
               </Form.Group>
             </FlexboxGridItem>
-            <FlexboxGridItem colspan={12}>
+            <FlexboxGridItem
+              colspan={12}
+              style={{
+                display:
+                  formValue.priority === "Low" || formValue.priority === ""
+                    ? "none"
+                    : "flex",
+              }}
+            >
               <Form.Group controlId="hasReminder">
                 <Form.ControlLabel>Reminder:</Form.ControlLabel>
                 <Form.Control
                   name="hasReminder"
                   accepter={Toggle}
                   onChange={(value) => setValue("hasReminder", value)}
+                  value={formValue.hasReminder}
                 ></Form.Control>
               </Form.Group>
             </FlexboxGridItem>

@@ -122,17 +122,19 @@
 }
 
 .btn-shake-green {
+  background-color: transparent;
   transition: 0.4s ease-out;
 }
 
 .btn-shake-green:hover {
   color: #04a104;
-  transform: scale(1.5);
+  transform: scale(1.2);
   cursor: pointer;
 }
 
-.green {
+.green-cloud {
   color: #04a104;
+  background-color: transparent;
 }
 
 @media screen and (min-width: 576px) {

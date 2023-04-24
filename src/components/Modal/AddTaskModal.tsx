@@ -30,9 +30,11 @@ const model = Schema.Model({
 const AddTaskModal = ({
   open,
   setOpenModal,
+  setTasks,
 }: {
   open: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
 }) => {
   const [formValue, setFormValue] = useState({
     title: "",
@@ -62,9 +64,29 @@ const AddTaskModal = ({
   ) => {
     event.preventDefault();
     if (!passValidation) return;
-    console.log(formValue);
+    // console.log(formValue);
 
     // TODO: add new task to database
+
+    setTasks((currentTasks) => {
+      const newTasks = [...currentTasks];
+      newTasks.push({
+        ...formValue,
+        taskId: (Math.random() * 10000).toFixed(0).toString(),
+        reminderDateTime: null,
+        completedDateTime: null,
+        createdDateTime: new Date(),
+        progress: 0,
+        isCompleted: false,
+        priority:
+          formValue.priority === "low"
+            ? "low"
+            : formValue.priority === "medium"
+            ? "medium"
+            : "high",
+      });
+      return newTasks;
+    });
 
     setOpenModal(false);
     setFormValue({
@@ -144,15 +166,15 @@ const AddTaskModal = ({
                   name="priority"
                   accepter={RadioGroup}
                   onChange={(value) => {
-                    if (value === "Low") {
+                    if (value === "low") {
                       setValue("hasReminder", false);
                     }
                     setValue("priority", value);
                   }}
                 >
-                  <Radio value="Low">Low</Radio>
-                  <Radio value="Medium">Medium</Radio>
-                  <Radio value="High">High</Radio>
+                  <Radio value="low">Low</Radio>
+                  <Radio value="medium">Medium</Radio>
+                  <Radio value="high">High</Radio>
                 </Form.Control>
               </Form.Group>
             </FlexboxGridItem>
@@ -160,7 +182,7 @@ const AddTaskModal = ({
               colspan={12}
               style={{
                 display:
-                  formValue.priority === "Low" || formValue.priority === ""
+                  formValue.priority === "low" || formValue.priority === ""
                     ? "none"
                     : "flex",
               }}

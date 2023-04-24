@@ -1,4 +1,14 @@
-import { Col, Row, FlexboxGrid, Button, Nav, Panel, Tag } from "rsuite";
+import {
+  Col,
+  Row,
+  FlexboxGrid,
+  Button,
+  Nav,
+  Panel,
+  Tag,
+  Whisper,
+  Tooltip,
+} from "rsuite";
 import Style from "../styles/Tasks.module.css";
 import {
   FaPlus,
@@ -13,6 +23,7 @@ import { MdDoneOutline, MdCloudDone } from "react-icons/md";
 import { useEffect, useState } from "react";
 import AddTaskModal from "../components/Modal/AddTaskModal";
 import mockTasksData from "../data";
+import { useNavigate } from "react-router-dom";
 
 // empty task list alert section
 const EmptyTasksList = ({ active }: { active: string }) => {
@@ -31,19 +42,34 @@ const EmptyTasksList = ({ active }: { active: string }) => {
 
 //single task row in list
 const SingleTask = ({ task, active }: { task: Task; active: string }) => {
+  const navigate = useNavigate();
   const date = task.dueDateTime;
-  // const date = new Date();
   const dateString = `
     ${date.getDate()}/${date.getMonth()}/${date.getFullYear()} ${date.getHours()}:${
     date.getMinutes() / 10 === 0 ? "0" + date.getMinutes() : date.getMinutes()
   }`;
 
+  const changeTaskStatus = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    active: string
+  ) => {
+    e.stopPropagation();
+    if (active === "toDo") {
+      console.log("Start doing");
+    } else if (active === "inProgress") {
+      console.log("Mark as done");
+    }
+  };
+
   return (
-    <Row className={Style["single-task"]}>
+    <Row
+      className={Style["single-task"]}
+      onClick={() => navigate(`/task/${task.taskId}`)}
+    >
       <Col xs={6} sm={7} md={8} lg={9} xl={10} xxl={12} id={Style["task-name"]}>
         {task.title}
       </Col>
-      <Col className={Style["list-sm-col"]}>{task.progress}%</Col>
+      <Col className={Style["list-sm-col"]}>{task.progress.toFixed(0)}%</Col>
       <Col className={Style["list-sm-col"]} id={Style["due-date-col"]}>
         {dateString}
       </Col>
@@ -67,11 +93,45 @@ const SingleTask = ({ task, active }: { task: Task; active: string }) => {
       </Col>
       <Col className={Style["task-btn"]}>
         {active === "toDo" ? (
-          <FiPlay className={Style["btn-shake-green"]} />
+          <Whisper
+            trigger="hover"
+            placement="right"
+            speaker={<Tooltip>Start doing</Tooltip>}
+          >
+            <button
+              className={Style["btn-shake-green"]}
+              onClick={(e) => {
+                changeTaskStatus(e, active);
+              }}
+            >
+              <FiPlay />
+            </button>
+          </Whisper>
         ) : active === "inProgress" ? (
-          <MdDoneOutline className={Style["btn-shake-green"]} />
+          <Whisper
+            trigger="hover"
+            placement="right"
+            speaker={<Tooltip>Mark as done</Tooltip>}
+          >
+            <button
+              className={Style["btn-shake-green"]}
+              onClick={(e) => {
+                changeTaskStatus(e, active);
+              }}
+            >
+              <MdDoneOutline />
+            </button>
+          </Whisper>
         ) : (
-          <MdCloudDone className={Style["green"]} />
+          <Whisper
+            trigger="hover"
+            placement="right"
+            speaker={<Tooltip>You have done the task!</Tooltip>}
+          >
+            <button className={Style["green-cloud"]}>
+              <MdCloudDone />
+            </button>
+          </Whisper>
         )}
       </Col>
     </Row>
@@ -101,7 +161,11 @@ const Tasks = () => {
 
   return (
     <FlexboxGrid justify="center">
-      <AddTaskModal open={openModal} setOpenModal={setOpenModal} />
+      <AddTaskModal
+        open={openModal}
+        setOpenModal={setOpenModal}
+        setTasks={setTasks}
+      />
       <Col
         xs={23}
         md={21}
@@ -162,7 +226,7 @@ const Tasks = () => {
             <FaRegArrowAltCircleDown />
             Priority
           </Col>
-          {/* <Col style={{ width: "35px", background: "red" }}>.</Col> */}
+          <Col style={{ width: "35px" }}>.</Col>
         </Row>
         {filteredTask.length === 0 ? (
           <EmptyTasksList active={active} />

@@ -69,6 +69,7 @@ export function TaskDetail() {
             <Form.Group controlId="content">
               <Form.ControlLabel>Content</Form.ControlLabel>
               <Form.Control
+                //@ts-ignore
                 rows={5}
                 name="content"
                 accepter={Textarea}
@@ -80,6 +81,7 @@ export function TaskDetail() {
                   <Form.ControlLabel>Due Date:</Form.ControlLabel>
                   <Form.Control
                     format="hh:mmaa dd/MM/yyyy"
+                    //@ts-ignore
                     defaultValue={new Date()}
                     ranges={[
                       {

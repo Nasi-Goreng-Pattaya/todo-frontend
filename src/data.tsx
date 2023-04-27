@@ -1,5 +1,7 @@
 //example data
 
+import { Task } from "./models/Task";
+
 const mockTasksData: Task[] = [
   {
     taskId: "1",

@@ -6,6 +6,7 @@ import { Col, FlexboxGrid, Panel } from "rsuite";
 import { TabBar } from "../components/Tab/TabBar";
 import { TabItem } from "../components/Tab/TabItem";
 import { TabPage } from "../components/Tab/TabPage";
+import { Task } from "../models/Task";
 
 // function to prepare data for pie charts
 const getPieData = (tasks: Task[]): Array<any> => {

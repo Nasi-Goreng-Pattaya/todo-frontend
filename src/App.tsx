@@ -9,6 +9,7 @@ import Tasks from "./pages/Tasks";
 import Profile from "./pages/Profile";
 import { Register } from "./pages/Register";
 import { TaskDetail } from "./pages/TaskDetail";
+import { Task } from "./models/Task";
 
 // mock data for tasks
 const tasks: Task[] = [

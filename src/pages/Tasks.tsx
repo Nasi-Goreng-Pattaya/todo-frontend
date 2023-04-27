@@ -24,6 +24,7 @@ import { useEffect, useState } from "react";
 import AddTaskModal from "../components/Modal/AddTaskModal";
 import mockTasksData from "../data";
 import { useNavigate } from "react-router-dom";
+import { Task } from "../models/Task";
 
 // empty task list alert section
 const EmptyTasksList = ({ active }: { active: string }) => {

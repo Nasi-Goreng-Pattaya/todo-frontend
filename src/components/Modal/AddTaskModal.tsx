@@ -15,6 +15,7 @@ import {
 } from "rsuite";
 import { useState, forwardRef, memo } from "react";
 import FlexboxGridItem from "rsuite/esm/FlexboxGrid/FlexboxGridItem";
+import { Task } from "../../models/Task";
 
 // task schema
 const { StringType, BooleanType, DateType } = Schema.Types;

@@ -1,4 +1,4 @@
-type Task = {
+export type Task = {
   taskId: string;
   priority: "low" | "medium" | "high";
   hasReminder: boolean;

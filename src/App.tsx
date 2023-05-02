@@ -1,7 +1,6 @@
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, Navigate } from "react-router-dom";
 import { Navbar, Nav, FlexboxGrid } from "rsuite";
 import { BsFillPatchCheckFill, BsPersonFill } from "react-icons/bs";
-import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Statistics from "./pages/Statistics";
 import Style from "./styles/App.module.css";
@@ -183,9 +182,6 @@ function App() {
             </FlexboxGrid>
           </Navbar.Brand>
           <Nav>
-            <Nav.Item as={Link} to={"/"}>
-              Home
-            </Nav.Item>
             <Nav.Item as={Link} to={"/tasks"}>
               Tasks
             </Nav.Item>
@@ -210,7 +206,7 @@ function App() {
       </header>
       <main className={Style["content-wrapper"]}>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Navigate replace to="/tasks" />} />
           <Route path="/login" element={<Login />} />
           <Route path="/tasks" element={<Tasks />} />
           <Route path="/statistics" element={<Statistics tasks={tasks} />} />

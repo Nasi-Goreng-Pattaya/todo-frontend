@@ -1,6 +1,6 @@
 //example data
 
-import { Task } from "./models/Task";
+import { Task } from "../models/Task";
 
 const mockTasksData: Task[] = [
   {

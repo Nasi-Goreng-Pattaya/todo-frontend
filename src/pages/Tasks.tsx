@@ -22,7 +22,7 @@ import { FiPlay } from "react-icons/fi";
 import { MdDoneOutline, MdCloudDone } from "react-icons/md";
 import { useEffect, useState } from "react";
 import AddTaskModal from "../components/Modal/AddTaskModal";
-import mockTasksData from "../data";
+import mockTasksData from "../data/data";
 import { useNavigate } from "react-router-dom";
 import { Task } from "../models/Task";
 

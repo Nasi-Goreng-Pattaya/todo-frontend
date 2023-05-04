@@ -62,6 +62,8 @@ const Login = () => {
                   appearance="primary"
                   block
                   loading={isLoading}
+                  as={Link}
+                  to="/tasks"
                 >
                   Login
                 </Button>

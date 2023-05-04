@@ -54,7 +54,7 @@ function App() {
       </header>
       <main className={Style["content-wrapper"]}>
         <Routes>
-          <Route path="/" element={<Navigate replace to="/tasks" />} />
+          <Route path="/" element={<Navigate replace to="/login" />} />
           <Route path="/login" element={<Login />} />
           <Route path="/tasks" element={<Tasks />} />
           <Route
@@ -64,6 +64,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/register" element={<Register />} />
           <Route path="/task/:taskId" element={<TaskDetail />} />
+          <Route path="*" element={<Navigate replace to="/" />} />
         </Routes>
       </main>
     </div>

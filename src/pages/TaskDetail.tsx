@@ -1,5 +1,5 @@
 import React from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   Button,
   ButtonToolbar,
@@ -16,6 +16,8 @@ import {
   SelectPicker,
 } from "rsuite";
 import FlexboxGridItem from "rsuite/esm/FlexboxGrid/FlexboxGridItem";
+import { MdNotificationsActive, MdDoneOutline } from "react-icons/md";
+import { BsTrash } from "react-icons/bs";
 
 const styles: { [x: string]: React.CSSProperties } = {
   createdOnText: {
@@ -59,7 +61,32 @@ export function TaskDetail() {
         <Panel
           header={
             <>
-              <h3>Task Name Here</h3>
+              <FlexboxGrid justify="space-between" align="middle">
+                <h3>Task Name Here</h3>
+                <div>
+                  <BsTrash
+                    style={{
+                      width: "2rem",
+                      height: "1.85rem",
+                      margin: "0rem 0.25rem",
+                    }}
+                  />
+                  <MdNotificationsActive
+                    style={{
+                      width: "2rem",
+                      height: "2rem",
+                      margin: "0rem 0.25rem",
+                    }}
+                  />
+                  <MdDoneOutline
+                    style={{
+                      width: "2rem",
+                      height: "2rem",
+                      margin: "0rem 0.25rem",
+                    }}
+                  />
+                </div>
+              </FlexboxGrid>
               <p style={styles.createdOnText}>Created on: 11:59pm 24/5/2023</p>
             </>
           }
@@ -131,9 +158,11 @@ export function TaskDetail() {
               </FlexboxGridItem>
               <FlexboxGridItem colspan={9}>
                 <ButtonToolbar>
-                  <Button appearance="primary" block loading={false}>
-                    Cancel
-                  </Button>
+                  <Link to="/tasks" style={{ display: "contents" }}>
+                    <Button appearance="primary" block loading={false}>
+                      Cancel
+                    </Button>
+                  </Link>
                 </ButtonToolbar>
               </FlexboxGridItem>
             </FlexboxGrid>

@@ -6,4 +6,9 @@ type User = {
   avatar: string;
 };
 
+export interface LoginUser {
+  name: string;
+  email: string;
+}
+
 export default User;

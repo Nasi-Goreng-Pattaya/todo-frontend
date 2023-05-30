@@ -10,14 +10,14 @@ import {
   Schema,
 } from "rsuite";
 import Style from "../styles/Login.module.css";
-import * as TaskApi from "../api/TodoApi";
 import { LoginCredentials } from "../api/TodoApi";
-import User from "../models/User";
+import * as TaskApi from "../api/TodoApi";
+import { LoginUser } from "../models/User";
 import { UnauthorizedError } from "../errors/httpErrors";
 import { useForm } from "react-hook-form";
 
 interface LoginModalProps {
-  onLoginSuccessful: (user: User) => void;
+  onLoginSuccessful: (user: LoginUser) => void;
 }
 
 const { StringType } = Schema.Types;
@@ -36,8 +36,8 @@ const Login = ({ onLoginSuccessful }: LoginModalProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const handleOnSubmit = async (
     passValidation: boolean,
-    event: React.FormEvent<HTMLFormElement>,
-    credentials: LoginCredentials
+    event: React.FormEvent<HTMLFormElement>
+    // credentials: LoginCredentials
   ) => {
     event.preventDefault();
     if (!passValidation) return;
@@ -48,17 +48,17 @@ const Login = ({ onLoginSuccessful }: LoginModalProps) => {
     // todo perform login operation
     // after validating the user setIsLoading(false);
     // navigate to the main page
-    try {
-      const user = await TaskApi.login(credentials);
-      onLoginSuccessful(user);
-    } catch (error) {
-      if (error instanceof UnauthorizedError) {
-        setErrorText(error.message);
-      } else {
-        alert(error);
-      }
-      console.error(error);
-    }
+    // try {
+    //   const user = await TaskApi.login(credentials);
+    //   onLoginSuccessful(user);
+    // } catch (error) {
+    //   if (error instanceof UnauthorizedError) {
+    //     setErrorText(error.message);
+    //   } else {
+    //     alert(error);
+    //   }
+    //   console.error(error);
+    // }
   };
   return (
     <FlexboxGrid justify="center">

@@ -62,8 +62,8 @@ export function Register() {
                   appearance="primary"
                   block
                   loading={false}
-                  as={Link}
-                  to="/login"
+                  // as={Link}
+                  // to="/login"
                 >
                   Register
                 </Button>

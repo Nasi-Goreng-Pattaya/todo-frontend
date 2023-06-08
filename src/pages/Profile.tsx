@@ -19,7 +19,7 @@ import User from "../models/User";
 const user: User = {
   name: "Rick Astley",
   email: "rickastley1234@gmail.com",
-  gender: "m",
+  gender: "M",
   birthDate: new Date("2000-12-31"),
   avatar:
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjBCWfqcMo0udmC_nv8VqFkh8Ej4oeC-GL7DLmwEbtoSrPdZkvUhiYBBZS-7G63iZg-WQ&usqp=CAU",
@@ -78,7 +78,7 @@ const ShowProfileSection: FC<ShowingProps> = ({ userData, setIsEdit }) => {
                 Gender:
               </Col>
               <Col xs={16} className={Style["detail-info"]}>
-                {gender === "m" ? "Male" : "Female"}
+                {gender === "M" ? "Male" : "Female"}
               </Col>
             </Row>
             <Row>
@@ -122,7 +122,7 @@ const EditProfileSection: FC<ShowingProps & EditingProps> = ({
   };
 
   const handleSelectedGender = (value: string) => {
-    const inputGender: "m" | "f" = value === "Male" ? "m" : "f";
+    const inputGender: "M" | "F" = value === "Male" ? "M" : "F";
     setFormData((currFormData) => ({
       ...currFormData,
       gender: inputGender,
@@ -209,7 +209,7 @@ const EditProfileSection: FC<ShowingProps & EditingProps> = ({
               </Col>
               <Col xs={16} className={Style["detail-info"]}>
                 <InputPicker
-                  value={formData.gender === "m" ? "Male" : "Female"}
+                  value={formData.gender === "M" ? "Male" : "Female"}
                   data={genderData}
                   cleanable={false}
                   style={{ color: "red" }}

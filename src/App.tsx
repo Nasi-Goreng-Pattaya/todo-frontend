@@ -1,4 +1,4 @@
-import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { Navbar, Nav, FlexboxGrid } from "rsuite";
 import { BsFillPatchCheckFill, BsPersonFill } from "react-icons/bs";
 import Login from "./pages/Login";
@@ -10,11 +10,22 @@ import { Register } from "./pages/Register";
 import { TaskDetail } from "./pages/TaskDetail";
 import { Task } from "./models/Task";
 import mockTasksData from "./data/data";
+import { useDispatch } from "react-redux";
+import { logout } from "./features/auth/authSlice";
+import { AppDispatch } from "./store";
 
 function App() {
   const location = useLocation();
+  const dispatch = useDispatch<AppDispatch>()
+  const navigate = useNavigate()
+
   const onAuthPath =
     location.pathname === "/register" || location.pathname === "/login";
+
+  const onLogout = () => {
+    dispatch(logout())
+    navigate('/')
+  }
 
   return (
     <div className={Style["wrapper"]}>
@@ -43,7 +54,7 @@ function App() {
                   <Nav.Item as={Link} to="/profile">
                     Profile
                   </Nav.Item>
-                  <Nav.Item as={Link} to="/login">
+                  <Nav.Item onClick={onLogout}>
                     Logout
                   </Nav.Item>
                 </Nav.Menu>

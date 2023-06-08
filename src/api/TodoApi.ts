@@ -1,106 +1,106 @@
-import { ConflictError, UnauthorizedError } from "../errors/httpErrors";
-import { Task } from "../models/Task";
-import User from "./../models/User";
+// import { ConflictError, UnauthorizedError } from "../errors/httpErrors";
+// import { Task } from "../models/Task";
+// import User from "./../models/User";
 
-async function fetchData(input: RequestInfo, init?: RequestInit) {
-  const response = await fetch(input, init);
-  if (response.ok) {
-    return response;
-  } else {
-    const errorBody = await response.json();
-    const errorMessage = errorBody.error;
-    if (response.status === 401) {
-      throw new UnauthorizedError(errorMessage);
-    } else if (response.status === 409) {
-      throw new ConflictError(errorMessage);
-    } else {
-      throw Error(
-        "Request failed with status: " +
-          response.status +
-          " message: " +
-          errorMessage
-      );
-    }
-  }
-}
+// async function fetchData(input: RequestInfo, init?: RequestInit) {
+//   const response = await fetch(input, init);
+//   if (response.ok) {
+//     return response;
+//   } else {
+//     const errorBody = await response.json();
+//     const errorMessage = errorBody.error;
+//     if (response.status === 401) {
+//       throw new UnauthorizedError(errorMessage);
+//     } else if (response.status === 409) {
+//       throw new ConflictError(errorMessage);
+//     } else {
+//       throw Error(
+//         "Request failed with status: " +
+//           response.status +
+//           " message: " +
+//           errorMessage
+//       );
+//     }
+//   }
+// }
 
-export async function getLoggedInUser(): Promise<User> {
-  const response = await fetchData("/api/users", { method: "GET" });
-  return response.json();
-}
+// export async function getLoggedInUser(): Promise<User> {
+//   const response = await fetchData("/api/users", { method: "GET" });
+//   return response.json();
+// }
 
-export interface SignUpCredentials {
-  name: string;
-  email: string;
-  password: string;
-}
+// export interface SignUpCredentials {
+//   name: string;
+//   email: string;
+//   password: string;
+// }
 
-export async function signUp(credentials: SignUpCredentials): Promise<User> {
-  const response = await fetchData("/api/users/signup", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(credentials),
-  });
-  return response.json();
-}
+// export async function signUp(credentials: SignUpCredentials): Promise<User> {
+//   const response = await fetchData("/api/users/signup", {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify(credentials),
+//   });
+//   return response.json();
+// }
 
-export interface LoginCredentials {
-  username: string;
-  password: string;
-}
+// export interface LoginCredentials {
+//   username: string;
+//   password: string;
+// }
 
-export async function login(credentials: LoginCredentials): Promise<User> {
-  const response = await fetchData("/api/users/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(credentials),
-  });
-  return response.json();
-}
+// export async function login(credentials: LoginCredentials): Promise<User> {
+//   const response = await fetchData("/api/users/login", {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify(credentials),
+//   });
+//   return response.json();
+// }
 
-export async function logout() {
-  await fetchData("/api/users/logout", { method: "POST" });
-}
+// export async function logout() {
+//   await fetchData("/api/users/logout", { method: "POST" });
+// }
 
-export async function fetchTasks(): Promise<Task[]> {
-  const response = await fetchData("/api/tasks", { method: "GET" });
-  return response.json();
-}
+// export async function fetchTasks(): Promise<Task[]> {
+//   const response = await fetchData("/api/tasks", { method: "GET" });
+//   return response.json();
+// }
 
-export interface TaskInput {
-  title: string;
-  content: string;
-}
+// export interface TaskInput {
+//   title: string;
+//   content: string;
+// }
 
-export async function createTask(task: TaskInput): Promise<Task> {
-  const response = await fetchData("/api/tasks", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(task),
-  });
-  return response.json();
-}
+// export async function createTask(task: TaskInput): Promise<Task> {
+//   const response = await fetchData("/api/tasks", {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify(task),
+//   });
+//   return response.json();
+// }
 
-export async function updateTask(
-  taskId: string,
-  task: TaskInput
-): Promise<Task> {
-  const response = await fetchData("/api/tasks/" + taskId, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(task),
-  });
-  return response.json();
-}
+// export async function updateTask(
+//   taskId: string,
+//   task: TaskInput
+// ): Promise<Task> {
+//   const response = await fetchData("/api/tasks/" + taskId, {
+//     method: "PATCH",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify(task),
+//   });
+//   return response.json();
+// }
 
-export async function deleteTask(taskId: string) {
-  await fetchData("/api/tasks/" + taskId, { method: "DELETE" });
-}
+// export async function deleteTask(taskId: string) {
+//   await fetchData("/api/tasks/" + taskId, { method: "DELETE" });
+// }

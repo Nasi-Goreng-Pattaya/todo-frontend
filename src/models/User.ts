@@ -1,14 +1,17 @@
 type User = {
+  _id: string;
   name: string;
   email: string;
-  gender: "m" | "f";
-  birthDate: Date | null;
-  avatar: string;
+  token: string;
+  gender?: "M" | "F";
+  birthDate?: Date | null;
+  avatar?: string;
 };
 
-export interface LoginUser {
-  name: string;
+export interface LoginRegisterUser {
+  name?: string;
   email: string;
+  password: string;
 }
 
 export default User;

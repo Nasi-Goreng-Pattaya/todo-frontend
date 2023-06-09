@@ -104,3 +104,5 @@
 // export async function deleteTask(taskId: string) {
 //   await fetchData("/api/tasks/" + taskId, { method: "DELETE" });
 // }
+
+export {};

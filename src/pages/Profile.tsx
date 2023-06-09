@@ -17,12 +17,14 @@ import User from "../models/User";
 
 //mock data for user
 const user: User = {
+  _id: "12345",
   name: "Rick Astley",
   email: "rickastley1234@gmail.com",
   gender: "M",
   birthDate: new Date("2000-12-31"),
   avatar:
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjBCWfqcMo0udmC_nv8VqFkh8Ej4oeC-GL7DLmwEbtoSrPdZkvUhiYBBZS-7G63iZg-WQ&usqp=CAU",
+  token: "12345",
 };
 
 type ShowingProps = {

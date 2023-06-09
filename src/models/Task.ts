@@ -12,3 +12,32 @@ export type Task = {
   isCompleted: boolean;
   completedDateTime: Date | null;
 };
+
+export interface Tasks {
+  priority: "low" | "medium" | "high";
+  hasReminder: boolean;
+  reminderDateTime: Date | null;
+  createdDateTime: Date;
+  title: string;
+  progress: number;
+  content: string;
+  category: string;
+  dueDateTime: Date;
+  isCompleted: boolean;
+  completedDateTime: Date | null;
+}
+
+export interface CreateTask {
+  taskId: string;
+  priority: "low" | "medium" | "high";
+  hasReminder: boolean;
+  reminderDateTime: Date | null;
+  createdDateTime: Date;
+  title: string;
+  progress: number;
+  content: string;
+  category: string;
+  dueDateTime: Date;
+  isCompleted: boolean;
+  completedDateTime: Date | null;
+}

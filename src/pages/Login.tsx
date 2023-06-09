@@ -1,24 +1,21 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from "react-router-dom";
 import {
   Button,
   ButtonToolbar,
   Col,
   FlexboxGrid,
   Form,
+  Message,
   Panel,
   Schema,
+  useToaster,
 } from "rsuite";
 import Style from "../styles/Login.module.css";
-import { LoginCredentials } from "../api/TodoApi";
-import * as TaskApi from "../api/TodoApi";
-import { LoginUser } from "../models/User";
-import { UnauthorizedError } from "../errors/httpErrors";
-import { useForm } from "react-hook-form";
-
-interface LoginModalProps {
-  onLoginSuccessful: (user: LoginUser) => void;
-}
+import { LoginRegisterUser } from "../models/User";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../store";
+import { AuthState, login, reset } from "../features/auth/authSlice";
 
 const { StringType } = Schema.Types;
 const model = Schema.Model({
@@ -30,36 +27,56 @@ const model = Schema.Model({
     .minLength(8, "Password must be at least 8 characters long."),
 });
 
-const Login = ({ onLoginSuccessful }: LoginModalProps) => {
-  const [errorText, setErrorText] = useState<string | null>(null);
+const Login = () => {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  })
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const navigate = useNavigate()
+
+  const dispatch = useDispatch<AppDispatch>()
+
+  const toaster = useToaster()
+
+  const { user, isLoading, isError, isSuccess, message } = useSelector<RootState, AuthState>(
+    state => state.auth
+  )
+
+  useEffect(() => {
+    if (isError) {
+      toaster.push(<Message showIcon type='error'>{message}</Message>, { placement: 'bottomEnd' })
+    }
+    
+    if (isSuccess) {
+      navigate('/tasks')
+      toaster.push(<Message showIcon type='success'>{message}</Message>, { placement: 'bottomEnd' })
+    } else if (user) {
+      navigate('/tasks')
+    }
+    
+    dispatch(reset())
+    console.log({ isError, isSuccess, user, message});
+    
+  }, [isError, isSuccess, user, message])
+
+  const handleOnChange = (value: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prevState => ({
+      ...prevState,
+      [e.target.name]: value
+    }))
+  }
+
   const handleOnSubmit = async (
     passValidation: boolean,
-    event: React.FormEvent<HTMLFormElement>,
-    credentials: LoginCredentials
+    event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
     if (!passValidation) return;
-    setIsLoading(true);
-    const formData = new FormData(event.currentTarget);
-    const emailProvidedByUser: string = formData.get("email") as string;
-    const passwordProvidedByUser: string = formData.get("password") as string;
-    // todo perform login operation
-    // after validating the user setIsLoading(false);
-    // navigate to the main page
-    try {
-      const user = await TaskApi.login(credentials);
-      onLoginSuccessful(user);
-    } catch (error) {
-      if (error instanceof UnauthorizedError) {
-        setErrorText(error.message);
-      } else {
-        alert(error);
-      }
-      console.error(error);
-    }
-  };
+    const userData: LoginRegisterUser = formData
+    dispatch(login(userData))
+  }
+
   return (
     <FlexboxGrid justify="center">
       <FlexboxGrid.Item as={Col} md={15} lg={12} xl={9} colspan={21}>
@@ -67,7 +84,9 @@ const Login = ({ onLoginSuccessful }: LoginModalProps) => {
           <Form fluid model={model} onSubmit={handleOnSubmit}>
             <Form.Group controlId="email">
               <Form.ControlLabel>Email address</Form.ControlLabel>
-              <Form.Control name="email" />
+              <Form.Control
+                name="email"
+                onChange={handleOnChange} />
               <Form.ErrorMessage />
             </Form.Group>
             <Form.Group controlId="password">
@@ -76,6 +95,7 @@ const Login = ({ onLoginSuccessful }: LoginModalProps) => {
                 name="password"
                 type="password"
                 autoComplete="off"
+                onChange={handleOnChange}
               />
             </Form.Group>
             <Form.Group>
@@ -85,8 +105,6 @@ const Login = ({ onLoginSuccessful }: LoginModalProps) => {
                   appearance="primary"
                   block
                   loading={isLoading}
-                  // as={Link}
-                  // to="/tasks"
                 >
                   Login
                 </Button>

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { CreateTask, Task, Tasks } from "../../models/Task";
+import { Task, Tasks, updateTaskPayload } from "../../models/Task";
 import taskService from "./taskService";
 
 const userItem = localStorage.getItem("user");
@@ -21,21 +21,20 @@ const initialState: TaskState = {
   message: "",
 };
 
-export const createTask = createAsyncThunk<
-  Task,
-  CreateTask,
-  { rejectValue: string }
->("/", async (task, thunkAPI) => {
-  try {
-    return await taskService.createTasks(task);
-  } catch (error: any) {
-    const errorMessage =
-      (error.response && error.response && error.response.data.message) ||
-      error.message ||
-      error.toString();
-    return thunkAPI.rejectWithValue(errorMessage);
+export const createTask = createAsyncThunk<Task, Task, { rejectValue: string }>(
+  "/",
+  async (task, thunkAPI) => {
+    try {
+      return await taskService.createTasks(task);
+    } catch (error: any) {
+      const errorMessage =
+        (error.response && error.response && error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(errorMessage);
+    }
   }
-});
+);
 
 export const fetchTasks = createAsyncThunk<{ rejectValue: string }>(
   "/",
@@ -52,6 +51,40 @@ export const fetchTasks = createAsyncThunk<{ rejectValue: string }>(
   }
 );
 
+export const updateTask = createAsyncThunk<
+  Task,
+  updateTaskPayload,
+  { rejectValue: string }
+>("/updateTask", async (payload: updateTaskPayload, thunkAPI) => {
+  try {
+    const { taskId, updatedTask } = payload;
+    return await taskService.updateTask(`/${taskId}`, updatedTask);
+  } catch (error: any) {
+    const errorMessage =
+      (error.response && error.response && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    return thunkAPI.rejectWithValue(errorMessage);
+  }
+});
+
+export const deleteTask = createAsyncThunk<
+  Task,
+  updateTaskPayload,
+  { rejectValue: string }
+>("/deleteTask", async (payload: updateTaskPayload, thunkAPI) => {
+  try {
+    const { taskId, updatedTask } = payload;
+    return await taskService.deleteTask(`/${taskId}`);
+  } catch (error: any) {
+    const errorMessage =
+      (error.response && error.response && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    return thunkAPI.rejectWithValue(errorMessage);
+  }
+});
+
 export const taskSlice = createSlice({
   name: "task",
   initialState,
@@ -63,15 +96,11 @@ export const taskSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // builder
-    //   .addCase(register.pending, (state) => {
-    //     state.isLoading = true;
-    //   })
-    //   .addCase(register.fulfilled, (state, action) => {
-    //     state.isLoading = false;
-    //     state.isSuccess = true;
-    //     state.message = "Registration successful";
-    //   })
+    builder
+      //   .addCase(register.pending, (state) => {
+      //     state.isLoading = true;
+      //   })
+      .addCase(updateTask.fulfilled, (state, action) => {});
     //   .addCase(register.rejected, (state, action) => {
     //     state.isLoading = false;
     //     state.isError = true;

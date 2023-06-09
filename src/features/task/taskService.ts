@@ -1,4 +1,4 @@
-import { Tasks, Task, CreateTask } from "../../models/Task";
+import { Tasks, Task } from "../../models/Task";
 import axios from "axios";
 
 const taskApi = axios.create({
@@ -10,13 +10,24 @@ const fetchTasks = async (): Promise<Tasks[]> => {
   return response.data as Tasks[];
 };
 
-const createTasks = async (taskData: CreateTask): Promise<CreateTask> => {
+const createTasks = async (taskData: Task): Promise<Task> => {
   // const token = getToken();
-  const response = await taskApi.post<CreateTask>("/", taskData);
-  return response.data as CreateTask;
+  const response = await taskApi.post<Task>("/", taskData);
+  return response.data as Task;
 };
 
-const updateTask = async (params: type) => {};
+const updateTask = async (
+  taskId: string,
+  updatedTask: Partial<Task>
+): Promise<Task> => {
+  const response = await taskApi.put(`/${taskId}`, updatedTask);
+  return response.data as Task;
+};
+
+const deleteTask = async (taskId: string): Promise<Task> => {
+  const response = await taskApi.delete(`/${taskId}`);
+  return response.data as Task;
+};
 
 // export function getToken() {
 //   const user = localStorage.getItem("user");
@@ -28,4 +39,6 @@ const updateTask = async (params: type) => {};
 export default {
   createTasks,
   fetchTasks,
+  updateTask,
+  deleteTask,
 };

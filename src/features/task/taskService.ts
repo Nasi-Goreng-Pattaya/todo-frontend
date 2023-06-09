@@ -1,6 +1,5 @@
 import { Tasks, Task, CreateTask } from "../../models/Task";
 import axios from "axios";
-import { JWT_TOKEN_SECRET } from "../../../../todo-backend/src/utils/constants";
 
 const taskApi = axios.create({
   baseURL: "http://localhost:5000/api/task",
@@ -16,6 +15,8 @@ const createTasks = async (taskData: CreateTask): Promise<CreateTask> => {
   const response = await taskApi.post<CreateTask>("/", taskData);
   return response.data as CreateTask;
 };
+
+const updateTask = async (params: type) => {};
 
 // export function getToken() {
 //   const user = localStorage.getItem("user");

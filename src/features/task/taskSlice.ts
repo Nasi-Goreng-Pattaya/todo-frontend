@@ -37,17 +37,20 @@ export const createTask = createAsyncThunk<
   }
 });
 
-export const fetchTasks = createAsyncThunk<{rejectValue: string}>("/"， async (thunkAPI) => {
-  try {
-    return await taskService.fetchTasks();
-  } catch (error: any) {
-    const errorMessage =
-      (error.response && error.response && error.response.data.message) ||
-      error.message ||
-      error.toString();
-    return thunkAPI.rejectWithValue(errorMessage);
+export const fetchTasks = createAsyncThunk<{ rejectValue: string }>(
+  "/",
+  async (thunkAPI) => {
+    try {
+      return await taskService.fetchTasks();
+    } catch (error: any) {
+      const errorMessage =
+        (error.response && error.response && error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(errorMessage);
+    }
   }
-});
+);
 
 export const taskSlice = createSlice({
   name: "task",

@@ -8,7 +8,7 @@ const taskApi = axios.create({
 
 const fetchTasks = async (): Promise<Tasks[]> => {
   const response = await taskApi.get<Tasks[]>("/");
-  return response.data;
+  return response.data as Tasks[];
 };
 
 const createTasks = async (taskData: CreateTask): Promise<CreateTask> => {

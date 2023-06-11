@@ -1,9 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Task, Tasks, updateTaskPayload } from "../../models/Task";
 import taskService from "./taskService";
+import User from "../../models/User";
 
 const userItem = localStorage.getItem("user");
-const task: Task | null = userItem ? JSON.parse(userItem) : null;
+const user: User | null = userItem ? JSON.parse(userItem) : null;
 
 export interface TaskState {
   task: Task | null;
@@ -14,7 +15,7 @@ export interface TaskState {
 }
 
 const initialState: TaskState = {
-  task,
+  task: null,
   isLoading: false,
   isError: false,
   isSuccess: false,
@@ -36,20 +37,21 @@ export const createTask = createAsyncThunk<Task, Task, { rejectValue: string }>(
   }
 );
 
-export const fetchTasks = createAsyncThunk<{ rejectValue: string }>(
-  "/",
-  async (thunkAPI) => {
-    try {
-      return await taskService.fetchTasks();
-    } catch (error: any) {
-      const errorMessage =
-        (error.response && error.response && error.response.data.message) ||
-        error.message ||
-        error.toString();
-      return thunkAPI.rejectWithValue(errorMessage);
-    }
+export const fetchTasks = createAsyncThunk<
+  Tasks[],
+  void,
+  { rejectValue: string }
+>("/", async (_, thunkAPI) => {
+  try {
+    return await taskService.fetchTasks();
+  } catch (error: any) {
+    const errorMessage =
+      (error.response && error.response && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    return thunkAPI.rejectWithValue(errorMessage);
   }
-);
+});
 
 export const updateTask = createAsyncThunk<
   Task,

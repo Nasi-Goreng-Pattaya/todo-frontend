@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Button,
@@ -29,43 +29,55 @@ const model = Schema.Model({
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  })
+    email: "",
+    password: "",
+  });
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const dispatch = useDispatch<AppDispatch>()
+  const dispatch = useDispatch<AppDispatch>();
 
-  const toaster = useToaster()
+  const toaster = useToaster();
 
-  const { user, isLoading, isError, isSuccess, message } = useSelector<RootState, AuthState>(
-    state => state.auth
-  )
+  const { user, isLoading, isError, isSuccess, message } = useSelector<
+    RootState,
+    AuthState
+  >((state) => state.auth);
 
   useEffect(() => {
     if (isError) {
-      toaster.push(<Message showIcon type='error'>{message}</Message>, { placement: 'bottomEnd' })
+      toaster.push(
+        <Message showIcon type="error">
+          {message}
+        </Message>,
+        { placement: "bottomEnd" }
+      );
     }
-    
-    if (isSuccess) {
-      navigate('/tasks')
-      toaster.push(<Message showIcon type='success'>{message}</Message>, { placement: 'bottomEnd' })
-    } else if (user) {
-      navigate('/tasks')
-    }
-    
-    dispatch(reset())
-    console.log({ isError, isSuccess, user, message});
-    
-  }, [isError, isSuccess, user, message])
 
-  const handleOnChange = (value: string, e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prevState => ({
+    if (isSuccess) {
+      navigate("/tasks");
+      toaster.push(
+        <Message showIcon type="success">
+          {message}
+        </Message>,
+        { placement: "bottomEnd" }
+      );
+    } else if (user) {
+      navigate("/tasks");
+    }
+
+    dispatch(reset());
+  }, [isError, isSuccess, user, message]);
+
+  const handleOnChange = (
+    value: string,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setFormData((prevState) => ({
       ...prevState,
-      [e.target.name]: value
-    }))
-  }
+      [e.target.name]: value,
+    }));
+  };
 
   const handleOnSubmit = async (
     passValidation: boolean,
@@ -73,9 +85,9 @@ const Login = () => {
   ) => {
     event.preventDefault();
     if (!passValidation) return;
-    const userData: LoginRegisterUser = formData
-    dispatch(login(userData))
-  }
+    const userData: LoginRegisterUser = formData;
+    dispatch(login(userData));
+  };
 
   return (
     <FlexboxGrid justify="center">
@@ -84,9 +96,7 @@ const Login = () => {
           <Form fluid model={model} onSubmit={handleOnSubmit}>
             <Form.Group controlId="email">
               <Form.ControlLabel>Email address</Form.ControlLabel>
-              <Form.Control
-                name="email"
-                onChange={handleOnChange} />
+              <Form.Control name="email" onChange={handleOnChange} />
               <Form.ErrorMessage />
             </Form.Group>
             <Form.Group controlId="password">

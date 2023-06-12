@@ -15,16 +15,24 @@ import {
   RadioGroup,
   SelectPicker,
   Toggle,
+  Tooltip,
+  Whisper,
 } from "rsuite";
+import Style from "../styles/Tasks.module.css";
 import FlexboxGridItem from "rsuite/esm/FlexboxGrid/FlexboxGridItem";
 import { MdNotificationsActive, MdDoneOutline } from "react-icons/md";
-import { BsTrash } from "react-icons/bs";
-import { fetchTaskById, updateTask } from "../features/task/taskSlice";
+import { BsClipboardFill, BsClipboardPlusFill, BsTrash } from "react-icons/bs";
+import {
+  deleteTask,
+  fetchTaskById,
+  updateTask,
+} from "../features/task/taskSlice";
 import { Task, TaskJson, toTask } from "../models/Task";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store";
 import moment from "moment";
 import { taskCategories } from "../data/taskCategories";
+import { FiPlay } from "react-icons/fi";
 
 const styles: { [x: string]: React.CSSProperties } = {
   createdOnText: {
@@ -88,6 +96,82 @@ export function TaskDetail() {
     };
   }, []);
 
+  function showStatusIcon() {
+    if (task?.status === "todo") {
+      return (
+        <Whisper
+          trigger="hover"
+          placement="right"
+          speaker={<Tooltip>Start doing</Tooltip>}
+        >
+          <button
+            className={Style["btn-shake-green"]}
+            onClick={(e) => {
+              setTask({ ...task, status: "inprogress" });
+            }}
+          >
+            <FiPlay
+              style={{
+                width: "2rem",
+                height: "2rem",
+                margin: "0rem 0.25rem",
+              }}
+            />
+          </button>
+        </Whisper>
+      );
+    }
+    if (task?.status === "inprogress") {
+      return (
+        <Whisper
+          trigger="hover"
+          placement="right"
+          speaker={<Tooltip>Mark as done</Tooltip>}
+        >
+          <button
+            className={Style["btn-shake-green"]}
+            onClick={(e) => {
+              setTask({ ...task, status: "completed" });
+            }}
+          >
+            <MdDoneOutline
+              style={{
+                width: "2rem",
+                height: "2rem",
+                margin: "0rem 0.25rem",
+              }}
+            />
+          </button>
+        </Whisper>
+      );
+    }
+    if (task?.status === "completed") {
+      return (
+        <Whisper
+          trigger="hover"
+          placement="right"
+          speaker={<Tooltip>Mark as To Do</Tooltip>}
+        >
+          <button
+            className={Style["btn-shake-green"]}
+            onClick={(e) => {
+              setTask({ ...task, status: "todo" });
+            }}
+          >
+            <BsClipboardPlusFill
+              style={{
+                width: "2rem",
+                height: "2rem",
+                margin: "0rem 0.25rem",
+              }}
+            />
+          </button>
+        </Whisper>
+      );
+    }
+    return null;
+  }
+
   return (
     <FlexboxGrid justify="center">
       <FlexboxGridItem as={Col} md={15} lg={12} xl={9} colspan={21}>
@@ -97,13 +181,28 @@ export function TaskDetail() {
               <FlexboxGrid justify="space-between" align="middle">
                 <h3>{task?.title ?? "Loading Task..."}</h3>
                 <div>
-                  <BsTrash
-                    style={{
-                      width: "2rem",
-                      height: "1.85rem",
-                      margin: "0rem 0.25rem",
-                    }}
-                  />
+                  <Whisper
+                    trigger="hover"
+                    placement="right"
+                    speaker={<Tooltip>Delete Task</Tooltip>}
+                  >
+                    <button
+                      className={Style["btn-shake-red"]}
+                      onClick={(e) => {
+                        if (!taskId) return;
+                        dispatch(deleteTask(taskId));
+                      }}
+                    >
+                      <BsTrash
+                        style={{
+                          width: "2rem",
+                          height: "1.85rem",
+                          margin: "0rem 0.25rem",
+                        }}
+                      />
+                    </button>
+                  </Whisper>
+                  {showStatusIcon()}
                   {/* <MdNotificationsActive
                     style={{
                       width: "2rem",
@@ -111,13 +210,6 @@ export function TaskDetail() {
                       margin: "0rem 0.25rem",
                     }}
                   /> */}
-                  <MdDoneOutline
-                    style={{
-                      width: "2rem",
-                      height: "2rem",
-                      margin: "0rem 0.25rem",
-                    }}
-                  />
                 </div>
               </FlexboxGrid>
               <p style={styles.createdOnText}>

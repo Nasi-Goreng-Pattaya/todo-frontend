@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   Button,
@@ -19,7 +19,7 @@ import FlexboxGridItem from "rsuite/esm/FlexboxGrid/FlexboxGridItem";
 import { MdNotificationsActive, MdDoneOutline } from "react-icons/md";
 import { BsTrash } from "react-icons/bs";
 import { fetchTaskById } from "../features/task/taskSlice";
-import { TaskJson } from "../models/Task";
+import { Task, TaskJson, toTask } from "../models/Task";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store";
 
@@ -49,6 +49,7 @@ const CustomDatePicker = React.forwardRef<
 
 export function TaskDetail() {
   const { taskId } = useParams();
+  const [task, setTask] = useState<Task | null>(null);
   const dispatch = useDispatch<AppDispatch>();
 
   const handleOnSubmit = (
@@ -72,7 +73,7 @@ export function TaskDetail() {
       const result = await dispatch(fetchTaskById(taskId));
       const task = result.payload as TaskJson;
       if (!ignore) {
-        console.log(task);
+        setTask(toTask(task));
       }
       return task;
     }
@@ -89,7 +90,7 @@ export function TaskDetail() {
           header={
             <>
               <FlexboxGrid justify="space-between" align="middle">
-                <h3>Task Name Here</h3>
+                <h3>{task?.title ?? "Loading Task..."}</h3>
                 <div>
                   <BsTrash
                     style={{
@@ -114,7 +115,10 @@ export function TaskDetail() {
                   />
                 </div>
               </FlexboxGrid>
-              <p style={styles.createdOnText}>Created on: 11:59pm 24/5/2023</p>
+              <p style={styles.createdOnText}>
+                Created on:{" "}
+                {task?.createdAt?.toDateString?.() ?? "Loading Task..."}
+              </p>
             </>
           }
           bordered

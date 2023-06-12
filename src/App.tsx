@@ -1,18 +1,17 @@
 import {
   Route,
+  RouterProvider,
   createBrowserRouter,
   createRoutesFromElements,
-  RouterProvider,
   redirect,
 } from "react-router-dom";
 import Login from "./pages/Login";
-import Statistics from "./pages/Statistics";
-import Tasks from "./pages/Tasks";
 import Profile from "./pages/Profile";
 import { Register } from "./pages/Register";
-import { TaskDetail } from "./pages/TaskDetail";
-import mockTasksData from "./data/data";
 import { Root } from "./pages/Root";
+import Statistics from "./pages/Statistics";
+import { TaskDetail } from "./pages/TaskDetail";
+import Tasks from "./pages/Tasks";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -25,7 +24,7 @@ const router = createBrowserRouter(
       />
       <Route path="login" element={<Login />} />
       <Route path="tasks" element={<Tasks />} />
-      <Route path="statistics" element={<Statistics tasks={mockTasksData} />} />
+      <Route path="statistics" element={<Statistics />} />
       <Route path="profile" element={<Profile />} />
       <Route path="register" element={<Register />} />
       <Route path="task/:taskId" element={<TaskDetail />} />

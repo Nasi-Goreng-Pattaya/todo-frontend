@@ -2,11 +2,14 @@ import { BarChart, Bars, Line, LineChart, PieChart } from "@rsuite/charts";
 import { useEffect, useState } from "react";
 import { BsBarChartFill, BsPieChartFill } from "react-icons/bs";
 import { MdTimeline } from "react-icons/md";
+import { useDispatch } from "react-redux";
 import { Col, FlexboxGrid, Panel } from "rsuite";
 import { TabBar } from "../components/Tab/TabBar";
 import { TabItem } from "../components/Tab/TabItem";
 import { TabPage } from "../components/Tab/TabPage";
-import { Task } from "../models/Task";
+import { fetchTasks } from "../features/task/taskSlice";
+import { Task, TaskJson, toTaskArray } from "../models/Task";
+import { AppDispatch } from "../store";
 
 // function to prepare data for pie charts
 const getPieData = (tasks: Task[]): Array<any> => {
@@ -131,7 +134,7 @@ const getTimelineData = (tasks: Task[]) => {
   return timelineData;
 };
 
-const Statistics = ({ tasks }: { tasks: Task[] }) => {
+const Statistics = () => {
   type GraphDataType = {
     pieData: Array<any>;
     barLastWeekData: Array<[string, number]>;
@@ -139,6 +142,8 @@ const Statistics = ({ tasks }: { tasks: Task[] }) => {
     timelineData: Array<[string, number]>;
   };
 
+  const dispatch = useDispatch<AppDispatch>()
+  const [tasks, setTasks] = useState<Task[]>([])
   const [active, setActive] = useState("pie"); // pie | bar | line
   const [isGraphDataLoading, setIsGraphDataLoading] = useState(true);
   const [graphData, setGraphData] = useState<GraphDataType>({
@@ -149,6 +154,30 @@ const Statistics = ({ tasks }: { tasks: Task[] }) => {
   });
 
   useEffect(() => {
+    // fetch tasks and update in tasks state
+    let ignore = false;
+
+    getTasks();
+
+    async function getTasks() {
+      const result = await dispatch(fetchTasks());
+      const task = result.payload as TaskJson[];
+
+      if (!ignore) {
+        const taskData = toTaskArray(task)
+        setTasks(taskData);
+      }
+      return task;
+    }
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    setIsGraphDataLoading(true)
+    // update graphs
     setGraphData({
       pieData: getPieData(tasks),
       barLastWeekData: getBarLastWeekData(tasks),
@@ -156,7 +185,8 @@ const Statistics = ({ tasks }: { tasks: Task[] }) => {
       timelineData: getTimelineData(tasks),
     });
     setIsGraphDataLoading(false);
-  }, []);
+  }, [tasks])
+
 
   // define available tabs
   const tabItems: TabItem[] = [
@@ -218,8 +248,8 @@ const Statistics = ({ tasks }: { tasks: Task[] }) => {
                   data={graphData.barLastThreeMonthsData.data}
                 >
                   {graphData.barLastThreeMonthsData.categories.map(
-                    (category) => (
-                      <Bars name={category} />
+                    (category, index) => (
+                      <Bars name={category} key={index} />
                     )
                   )}
                 </BarChart>

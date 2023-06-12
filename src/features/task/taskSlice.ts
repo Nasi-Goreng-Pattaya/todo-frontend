@@ -102,7 +102,7 @@ export const taskSlice = createSlice({
       //   .addCase(register.pending, (state) => {
       //     state.isLoading = true;
       //   })
-      .addCase(updateTask.fulfilled, (state, action) => {});
+      .addCase(updateTask.fulfilled, (state, action) => { });
     //   .addCase(register.rejected, (state, action) => {
     //     state.isLoading = false;
     //     state.isError = true;

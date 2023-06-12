@@ -24,7 +24,7 @@ import { useEffect, useState } from "react";
 import AddTaskModal from "../components/Modal/AddTaskModal";
 import mockTasksData from "../data/data";
 import { useNavigate } from "react-router-dom";
-import { Task } from "../models/Task";
+import { Task, TaskJson, toTaskArray } from "../models/Task";
 import { useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store";
 import { fetchTasks } from "../features/task/taskSlice";
@@ -150,15 +150,22 @@ const Tasks = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    // TODO: fetch tasks list from backend API
-    setTasks(mockTasksData);
-
-    async function getTasks() {
-      const task = await dispatch(fetchTasks());
-      console.log(task);
-    }
+    let ignore = false;
 
     getTasks();
+
+    async function getTasks() {
+      const result = await dispatch(fetchTasks());
+      const task = result.payload as TaskJson[];
+      if (!ignore) {
+        setTasks(toTaskArray(task));
+      }
+      return task;
+    }
+
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   const filteredTask = tasks.filter((task) => {

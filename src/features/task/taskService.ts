@@ -1,5 +1,5 @@
-import axios from "axios";
 import { Task } from "../../models/Task";
+import axios from "axios";
 import User from "../../models/User";
 
 const userItem = localStorage.getItem("user");
@@ -8,6 +8,8 @@ const user: User | null = userItem ? JSON.parse(userItem) : null;
 export const taskApi = axios.create({
   baseURL: "http://localhost:5000/api/task",
 });
+
+taskApi.defaults.headers.common["Authorization"] = `Bearer ${user?.token}`;
 
 const fetchTasks = async (): Promise<Task[]> => {
   const response = await taskApi.get<Task[]>("/");

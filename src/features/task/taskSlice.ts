@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Task, updateTaskPayload } from "../../models/Task";
-import User from "../../models/User";
 import taskService from "./taskService";
 
 const userItem = localStorage.getItem("user");

@@ -61,8 +61,7 @@ export function TaskDetail() {
   ) => {
     event.preventDefault();
     if (!passValidation) return;
-    const formData = new FormData(event.currentTarget);
-    console.log(formData);
+    console.log(task);
   };
 
   useEffect(() => {
@@ -137,6 +136,10 @@ export function TaskDetail() {
                 name="content"
                 accepter={Textarea}
                 value={task?.content ?? "Loading Task Content..."}
+                onChange={(text) => {
+                  const newTask = { ...task, content: text } as Task;
+                  setTask(newTask);
+                }}
               ></Form.Control>
             </Form.Group>
             <FlexboxGrid>
@@ -154,6 +157,13 @@ export function TaskDetail() {
                     ]}
                     name="dueDate"
                     accepter={CustomDatePicker}
+                    onChange={(dateTime) => {
+                      const newTask = {
+                        ...task,
+                        dueDateTime: dateTime,
+                      } as Task;
+                      setTask(newTask);
+                    }}
                   />
                 </Form.Group>
               </FlexboxGridItem>
@@ -166,6 +176,10 @@ export function TaskDetail() {
                     accepter={SelectPicker}
                     value={task?.category}
                     data={selectData}
+                    onChange={(category) => {
+                      const newTask = { ...task, category: category } as Task;
+                      setTask(newTask);
+                    }}
                   />
                 </Form.Group>
               </FlexboxGridItem>
@@ -179,6 +193,13 @@ export function TaskDetail() {
                     name="radio"
                     accepter={RadioGroup}
                     value={task?.priority}
+                    onChange={(priority) => {
+                      const newTask = { ...task, priority: priority } as Task;
+                      if (priority === "low") {
+                        newTask.hasReminder = false;
+                      }
+                      setTask(newTask);
+                    }}
                   >
                     <Radio value="low">Low</Radio>
                     <Radio value="medium">Medium</Radio>
@@ -200,6 +221,13 @@ export function TaskDetail() {
                     name="hasReminder"
                     accepter={Toggle}
                     value={task?.hasReminder}
+                    onChange={(reminder) => {
+                      const newTask = {
+                        ...task,
+                        hasReminder: reminder,
+                      } as Task;
+                      setTask(newTask);
+                    }}
                   ></Form.Control>
                 </Form.Group>
               </FlexboxGridItem>

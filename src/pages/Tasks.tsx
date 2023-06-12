@@ -27,7 +27,8 @@ import { useNavigate } from "react-router-dom";
 import { Task, TaskJson, toTaskArray } from "../models/Task";
 import { useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store";
-import { fetchTasks } from "../features/task/taskSlice";
+import { fetchTasks, updateTask } from "../features/task/taskSlice";
+import { useImmer, Updater } from "use-immer";
 
 // empty task list alert section
 const EmptyTasksList = ({ active }: { active: string }) => {
@@ -45,23 +46,58 @@ const EmptyTasksList = ({ active }: { active: string }) => {
 };
 
 //single task row in list
-const SingleTask = ({ task, active }: { task: Task; active: string }) => {
+const SingleTask = ({
+  task,
+  setTasks,
+  active,
+}: {
+  task: Task;
+  setTasks: Updater<Task[]>;
+  active: string;
+}) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
   const date = task.dueDateTime;
   const dateString = `
     ${date.getDate()}/${date.getMonth()}/${date.getFullYear()} ${date.getHours()}:${
     date.getMinutes() / 10 === 0 ? "0" + date.getMinutes() : date.getMinutes()
   }`;
 
-  const changeTaskStatus = (
+  const changeTaskStatus = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     active: string
   ) => {
     e.stopPropagation();
     if (active === "toDo") {
-      console.log("Start doing");
+      setTasks((draft) => {
+        const foundtask = draft.find(
+          (draftTask) => draftTask.taskId === task.taskId
+        );
+        if (foundtask) {
+          foundtask.status = "inprogress";
+        }
+      });
+      await dispatch(
+        updateTask({
+          taskId: task.taskId,
+          updatedTask: { ...task, status: "inprogress" } as Task,
+        })
+      );
     } else if (active === "inProgress") {
-      console.log("Mark as done");
+      setTasks((draft) => {
+        const foundtask = draft.find(
+          (draftTask) => draftTask.taskId === task.taskId
+        );
+        if (foundtask) {
+          foundtask.status = "completed";
+        }
+      });
+      await dispatch(
+        updateTask({
+          taskId: task.taskId,
+          updatedTask: { ...task, status: "completed" } as Task,
+        })
+      );
     }
   };
 
@@ -145,7 +181,7 @@ const SingleTask = ({ task, active }: { task: Task; active: string }) => {
 const Tasks = () => {
   const [active, setActive] = useState("toDo");
   const [openModal, setOpenModal] = useState(false);
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useImmer<Task[]>([]);
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
@@ -246,7 +282,14 @@ const Tasks = () => {
           <EmptyTasksList active={active} />
         ) : (
           filteredTask.map((task, i) => {
-            return <SingleTask task={task} key={i} active={active} />;
+            return (
+              <SingleTask
+                task={task}
+                setTasks={setTasks}
+                key={i}
+                active={active}
+              />
+            );
           })
         )}
       </Col>

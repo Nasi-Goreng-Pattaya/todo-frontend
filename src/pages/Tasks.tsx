@@ -150,8 +150,6 @@ const Tasks = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    // TODO: fetch tasks list from backend API
-
     let ignore = false;
 
     getTasks();

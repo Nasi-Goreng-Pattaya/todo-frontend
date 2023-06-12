@@ -14,6 +14,7 @@ import {
   Radio,
   RadioGroup,
   SelectPicker,
+  Toggle,
 } from "rsuite";
 import FlexboxGridItem from "rsuite/esm/FlexboxGrid/FlexboxGridItem";
 import { MdNotificationsActive, MdDoneOutline } from "react-icons/md";
@@ -22,6 +23,7 @@ import { fetchTaskById } from "../features/task/taskSlice";
 import { Task, TaskJson, toTask } from "../models/Task";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store";
+import moment from "moment";
 
 const styles: { [x: string]: React.CSSProperties } = {
   createdOnText: {
@@ -117,7 +119,8 @@ export function TaskDetail() {
               </FlexboxGrid>
               <p style={styles.createdOnText}>
                 Created on:{" "}
-                {task?.createdAt?.toDateString?.() ?? "Loading Task..."}
+                {moment(task?.createdAt).format("HH:mma DD/M/YYYY") ??
+                  "Loading Task..."}
               </p>
             </>
           }
@@ -131,6 +134,7 @@ export function TaskDetail() {
                 rows={5}
                 name="content"
                 accepter={Textarea}
+                value={task?.content ?? "Loading Task Content..."}
               ></Form.Control>
             </Form.Group>
             <FlexboxGrid>
@@ -139,8 +143,7 @@ export function TaskDetail() {
                   <Form.ControlLabel>Due Date:</Form.ControlLabel>
                   <Form.Control
                     format="yyyy-MM-dd HH:mm"
-                    //@ts-ignore
-                    defaultValue={new Date()}
+                    value={task?.dueDateTime}
                     ranges={[
                       {
                         label: "Now",
@@ -159,19 +162,46 @@ export function TaskDetail() {
                     name="category"
                     style={styles.dropdownSelection}
                     accepter={SelectPicker}
+                    value={task?.category}
                     data={selectData}
                   />
                 </Form.Group>
               </FlexboxGridItem>
             </FlexboxGrid>
-            <Form.Group controlId="priority">
-              <Form.ControlLabel>Priority:</Form.ControlLabel>
-              <Form.Control inline name="radio" accepter={RadioGroup}>
-                <Radio value="Low">Low</Radio>
-                <Radio value="Medium">Medium</Radio>
-                <Radio value="High">High</Radio>
-              </Form.Control>
-            </Form.Group>
+            <FlexboxGrid style={{ marginBottom: "1.5rem" }}>
+              <FlexboxGridItem colspan={12}>
+                <Form.Group controlId="priority">
+                  <Form.ControlLabel>Priority:</Form.ControlLabel>
+                  <Form.Control
+                    inline
+                    name="radio"
+                    accepter={RadioGroup}
+                    value={task?.priority}
+                  >
+                    <Radio value="low">Low</Radio>
+                    <Radio value="medium">Medium</Radio>
+                    <Radio value="high">High</Radio>
+                  </Form.Control>
+                </Form.Group>
+              </FlexboxGridItem>
+              <FlexboxGridItem
+                style={{
+                  display:
+                    task?.priority === "low" || task?.priority === null
+                      ? "none"
+                      : "flex",
+                }}
+              >
+                <Form.Group controlId="hasReminder">
+                  <Form.ControlLabel>Reminder:</Form.ControlLabel>
+                  <Form.Control
+                    name="hasReminder"
+                    accepter={Toggle}
+                    value={task?.hasReminder}
+                  ></Form.Control>
+                </Form.Group>
+              </FlexboxGridItem>
+            </FlexboxGrid>
             <FlexboxGrid justify="space-around">
               <FlexboxGridItem colspan={9}>
                 <Form.Group>

@@ -30,7 +30,7 @@ const updateTask = async (
   taskId: string,
   updatedTask: Partial<Task>
 ): Promise<Task> => {
-  const response = await taskApi.put(`/${taskId}`, updatedTask);
+  const response = await taskApi.put("/" + taskId, updatedTask);
   return response.data as Task;
 };
 

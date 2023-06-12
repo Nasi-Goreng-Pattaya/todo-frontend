@@ -19,7 +19,7 @@ import {
 import FlexboxGridItem from "rsuite/esm/FlexboxGrid/FlexboxGridItem";
 import { MdNotificationsActive, MdDoneOutline } from "react-icons/md";
 import { BsTrash } from "react-icons/bs";
-import { fetchTaskById } from "../features/task/taskSlice";
+import { fetchTaskById, updateTask } from "../features/task/taskSlice";
 import { Task, TaskJson, toTask } from "../models/Task";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store";
@@ -55,13 +55,15 @@ export function TaskDetail() {
   const [task, setTask] = useState<Task | null>(null);
   const dispatch = useDispatch<AppDispatch>();
 
-  const handleOnSubmit = (
+  const handleOnSubmit = async (
     passValidation: boolean,
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
     if (!passValidation) return;
-    console.log(task);
+    if (taskId === undefined) return;
+    if (task === null) return;
+    await dispatch(updateTask({ taskId: taskId, updatedTask: task }));
   };
 
   useEffect(() => {

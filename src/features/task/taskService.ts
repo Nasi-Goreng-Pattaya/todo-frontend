@@ -1,4 +1,4 @@
-import { Tasks, Task } from "../../models/Task";
+import { Task } from "../../models/Task";
 import axios from "axios";
 import User from "../../models/User";
 
@@ -7,12 +7,13 @@ const user: User | null = userItem ? JSON.parse(userItem) : null;
 
 export const taskApi = axios.create({
   baseURL: "http://localhost:5000/api/task",
-  headers: { Authorization: `Bearer ${user?.token}` },
 });
 
-const fetchTasks = async (): Promise<Tasks[]> => {
-  const response = await taskApi.get<Tasks[]>("/");
-  return response.data as Tasks[];
+taskApi.defaults.headers.common["Authorization"] = `Bearer ${user?.token}`;
+
+const fetchTasks = async (): Promise<Task[]> => {
+  const response = await taskApi.get<Task[]>("/");
+  return response.data as Task[];
 };
 
 const createTasks = async (taskData: Task): Promise<Task> => {

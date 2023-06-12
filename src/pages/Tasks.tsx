@@ -25,6 +25,9 @@ import AddTaskModal from "../components/Modal/AddTaskModal";
 import mockTasksData from "../data/data";
 import { useNavigate } from "react-router-dom";
 import { Task } from "../models/Task";
+import { useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "../store";
+import { fetchTasks } from "../features/task/taskSlice";
 
 // empty task list alert section
 const EmptyTasksList = ({ active }: { active: string }) => {
@@ -144,10 +147,18 @@ const Tasks = () => {
   const [active, setActive] = useState("toDo");
   const [openModal, setOpenModal] = useState(false);
   const [tasks, setTasks] = useState<Task[]>([]);
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     // TODO: fetch tasks list from backend API
     setTasks(mockTasksData);
+
+    async function getTasks() {
+      const task = await dispatch(fetchTasks());
+      console.log(task);
+    }
+
+    getTasks();
   }, []);
 
   const filteredTask = tasks.filter((task) => {

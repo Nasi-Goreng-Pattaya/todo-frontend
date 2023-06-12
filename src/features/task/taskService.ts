@@ -1,7 +1,11 @@
 import { Tasks, Task } from "../../models/Task";
 import axios from "axios";
+import User from "../../models/User";
 
-const taskApi = axios.create({
+const userItem = localStorage.getItem("user");
+const user: User | null = userItem ? JSON.parse(userItem) : null;
+
+export const taskApi = axios.create({
   baseURL: "http://localhost:5000/api/task",
 });
 
@@ -11,7 +15,6 @@ const fetchTasks = async (): Promise<Task[]> => {
 };
 
 const createTasks = async (taskData: Task): Promise<Task> => {
-  // const token = getToken();
   const response = await taskApi.post<Task>("/", taskData);
   return response.data as Task;
 };

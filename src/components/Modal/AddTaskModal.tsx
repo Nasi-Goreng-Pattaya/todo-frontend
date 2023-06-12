@@ -65,7 +65,7 @@ const AddTaskModal = ({
   ) => {
     event.preventDefault();
     if (!passValidation) return;
-    // console.log(formValue);
+    console.log(formValue);
 
     // TODO: add new task to database
 
@@ -76,9 +76,7 @@ const AddTaskModal = ({
         taskId: (Math.random() * 10000).toFixed(0).toString(),
         reminderDateTime: null,
         completedDateTime: null,
-        createdDateTime: new Date(),
-        progress: 0,
-        isCompleted: false,
+        status: "todo",
         priority:
           formValue.priority === "low"
             ? "low"

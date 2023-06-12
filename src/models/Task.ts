@@ -3,14 +3,13 @@ export type Task = {
   priority: "low" | "medium" | "high";
   hasReminder: boolean;
   reminderDateTime: Date | null;
-  createdAt: Date;
+  createdAt?: Date;
   title: string;
-  progress: number;
   content: string;
   category: string;
   dueDateTime: Date;
-  isCompleted: boolean;
-  updatedAt: Date;
+  status: "todo" | "inprogress" | "completed";
+  updatedAt?: Date;
   completedDateTime: Date | null;
 };
 
@@ -22,11 +21,10 @@ export type TaskJson = {
   reminderDateTime: string | Date;
   createdAt: string | Date;
   title: string;
-  progress: number;
   content: string;
   category: string;
   dueDateTime: string | Date;
-  isCompleted: boolean;
+  status: "todo" | "inprogress" | "completed";
   updatedAt: string | Date;
   completedDateTime: string | Date;
 };

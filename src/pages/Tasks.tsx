@@ -73,7 +73,6 @@ const SingleTask = ({ task, active }: { task: Task; active: string }) => {
       <Col xs={6} sm={7} md={8} lg={9} xl={10} xxl={12} id={Style["task-name"]}>
         {task.title}
       </Col>
-      <Col className={Style["list-sm-col"]}>{task.progress.toFixed(0)}%</Col>
       <Col className={Style["list-sm-col"]} id={Style["due-date-col"]}>
         {dateString}
       </Col>
@@ -170,11 +169,11 @@ const Tasks = () => {
 
   const filteredTask = tasks.filter((task) => {
     if (active === "toDo") {
-      return task.progress === 0;
+      return task.status === "todo";
     } else if (active === "inProgress") {
-      return task.progress > 0 && task.progress < 100;
+      return task.status === "inprogress";
     } else if (active === "completed") {
-      return task.progress === 100;
+      return task.status === "completed";
     }
   });
 
@@ -228,10 +227,6 @@ const Tasks = () => {
           <Col xs={6} sm={7} md={8} lg={9} xl={10} xxl={12}>
             <FaTasks />
             Task Name
-          </Col>
-          <Col className={Style["list-sm-col"]}>
-            <FaChartPie />
-            Progress
           </Col>
           <Col className={Style["list-sm-col"]} id={Style["due-date-col"]}>
             <FaRegCalendarAlt />

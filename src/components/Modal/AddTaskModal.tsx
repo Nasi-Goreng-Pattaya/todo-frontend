@@ -16,6 +16,9 @@ import {
 import { useState, forwardRef, memo } from "react";
 import FlexboxGridItem from "rsuite/esm/FlexboxGrid/FlexboxGridItem";
 import { Task } from "../../models/Task";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../store";
+import { createTask } from "../../features/task/taskSlice";
 
 // task schema
 const { StringType, BooleanType, DateType } = Schema.Types;
@@ -46,6 +49,8 @@ const AddTaskModal = ({
     dueDateTime: new Date(),
   });
 
+  const dispatch = useDispatch<AppDispatch>();
+
   // data selection for category
   const selectData = ["Personal", "Work"].map((item) => ({
     label: item,
@@ -59,15 +64,16 @@ const AddTaskModal = ({
   };
 
   // function to add task
-  const handleAddTask = (
+  const handleAddTask = async (
     passValidation: boolean,
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
     if (!passValidation) return;
-    console.log(formValue);
 
-    // TODO: add new task to database
+    const task = formValue as Task;
+
+    await dispatch(createTask(task));
 
     setTasks((currentTasks) => {
       const newTasks = [...currentTasks];

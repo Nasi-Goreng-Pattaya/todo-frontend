@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Task, updateTaskPayload } from "../../models/Task";
 import taskService from "./taskService";
+import User from "../../models/User";
 
 const userItem = localStorage.getItem("user");
 const user: User | null = userItem ? JSON.parse(userItem) : null;

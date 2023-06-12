@@ -2,12 +2,14 @@ import { BarChart, Bars, Line, LineChart, PieChart } from "@rsuite/charts";
 import { useEffect, useState } from "react";
 import { BsBarChartFill, BsPieChartFill } from "react-icons/bs";
 import { MdTimeline } from "react-icons/md";
+import { useDispatch } from "react-redux";
 import { Col, FlexboxGrid, Panel } from "rsuite";
 import { TabBar } from "../components/Tab/TabBar";
 import { TabItem } from "../components/Tab/TabItem";
 import { TabPage } from "../components/Tab/TabPage";
-import { Task } from "../models/Task";
-import taskService from "../features/task/taskService";
+import { fetchTasks } from "../features/task/taskSlice";
+import { Task, TaskJson, toTaskArray } from "../models/Task";
+import { AppDispatch } from "../store";
 
 // function to prepare data for pie charts
 const getPieData = (tasks: Task[]): Array<any> => {
@@ -140,6 +142,7 @@ const Statistics = () => {
     timelineData: Array<[string, number]>;
   };
 
+  const dispatch = useDispatch<AppDispatch>()
   const [tasks, setTasks] = useState<Task[]>([])
   const [active, setActive] = useState("pie"); // pie | bar | line
   const [isGraphDataLoading, setIsGraphDataLoading] = useState(true);
@@ -151,8 +154,29 @@ const Statistics = () => {
   });
 
   useEffect(() => {
-    // fetch tasks data
-    getTasks()
+    // fetch tasks and update in tasks state
+    let ignore = false;
+
+    getTasks();
+
+    async function getTasks() {
+      const result = await dispatch(fetchTasks());
+      const task = result.payload as TaskJson[];
+
+      if (!ignore) {
+        const taskData = toTaskArray(task)
+        setTasks(taskData);
+      }
+      return task;
+    }
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    setIsGraphDataLoading(true)
     // update graphs
     setGraphData({
       pieData: getPieData(tasks),
@@ -161,13 +185,8 @@ const Statistics = () => {
       timelineData: getTimelineData(tasks),
     });
     setIsGraphDataLoading(false);
-  }, [tasks]);
+  }, [tasks])
 
-  const getTasks = async () => {
-    const taskData = await taskService.fetchTasks()
-    console.log(taskData);
-    setTasks(taskData);
-  }
 
   // define available tabs
   const tabItems: TabItem[] = [
@@ -229,8 +248,8 @@ const Statistics = () => {
                   data={graphData.barLastThreeMonthsData.data}
                 >
                   {graphData.barLastThreeMonthsData.categories.map(
-                    (category) => (
-                      <Bars name={category} />
+                    (category, index) => (
+                      <Bars name={category} key={index} />
                     )
                   )}
                 </BarChart>

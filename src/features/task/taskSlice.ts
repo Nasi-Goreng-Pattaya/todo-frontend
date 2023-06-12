@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Task, Tasks, updateTaskPayload } from "../../models/Task";
+import { Task, updateTaskPayload } from "../../models/Task";
 import taskService from "./taskService";
 import User from "../../models/User";
 
@@ -38,7 +38,7 @@ export const createTask = createAsyncThunk<Task, Task, { rejectValue: string }>(
 );
 
 export const fetchTasks = createAsyncThunk<
-  Tasks[],
+  Task[],
   void,
   { rejectValue: string }
 >("/", async (_, thunkAPI) => {

@@ -7,6 +7,7 @@ const user: User | null = userItem ? JSON.parse(userItem) : null;
 
 export const taskApi = axios.create({
   baseURL: "http://localhost:5000/api/task",
+  headers: { Authorization: `Bearer ${user?.token}` },
 });
 
 const fetchTasks = async (): Promise<Tasks[]> => {

@@ -53,6 +53,23 @@ export const fetchTasks = createAsyncThunk<
   }
 });
 
+export const fetchTaskById = createAsyncThunk<
+  Task,
+  string,
+  { rejectValue: string }
+>("/", async (payload, thunkAPI) => {
+  try {
+    const id = payload;
+    return await taskService.fetchTaskById(id);
+  } catch (error: any) {
+    const errorMessage =
+      (error.response && error.response && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    return thunkAPI.rejectWithValue(errorMessage);
+  }
+});
+
 export const updateTask = createAsyncThunk<
   Task,
   updateTaskPayload,
@@ -102,7 +119,7 @@ export const taskSlice = createSlice({
       //   .addCase(register.pending, (state) => {
       //     state.isLoading = true;
       //   })
-      .addCase(updateTask.fulfilled, (state, action) => { });
+      .addCase(updateTask.fulfilled, (state, action) => {});
     //   .addCase(register.rejected, (state, action) => {
     //     state.isLoading = false;
     //     state.isError = true;

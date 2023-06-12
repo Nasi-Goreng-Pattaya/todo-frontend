@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   Button,
@@ -18,6 +18,10 @@ import {
 import FlexboxGridItem from "rsuite/esm/FlexboxGrid/FlexboxGridItem";
 import { MdNotificationsActive, MdDoneOutline } from "react-icons/md";
 import { BsTrash } from "react-icons/bs";
+import { fetchTaskById } from "../features/task/taskSlice";
+import { TaskJson } from "../models/Task";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../store";
 
 const styles: { [x: string]: React.CSSProperties } = {
   createdOnText: {
@@ -45,6 +49,7 @@ const CustomDatePicker = React.forwardRef<
 
 export function TaskDetail() {
   const { taskId } = useParams();
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleOnSubmit = (
     passValidation: boolean,
@@ -54,6 +59,28 @@ export function TaskDetail() {
     if (!passValidation) return;
     const formData = new FormData(event.currentTarget);
   };
+
+  useEffect(() => {
+    let ignore = false;
+
+    getTask();
+
+    async function getTask() {
+      if (!taskId) {
+        return;
+      }
+      const result = await dispatch(fetchTaskById(taskId));
+      const task = result.payload as TaskJson;
+      if (!ignore) {
+        console.log(task);
+      }
+      return task;
+    }
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   return (
     <FlexboxGrid justify="center">

@@ -16,6 +16,11 @@ const fetchTasks = async (): Promise<Task[]> => {
   return response.data as Task[];
 };
 
+const fetchTaskById = async (id: string): Promise<Task> => {
+  const response = await taskApi.get<Task>("/" + id);
+  return response.data as Task;
+};
+
 const createTasks = async (taskData: Task): Promise<Task> => {
   const response = await taskApi.post<Task>("/", taskData);
   return response.data as Task;
@@ -44,6 +49,7 @@ const deleteTask = async (taskId: string): Promise<Task> => {
 export default {
   createTasks,
   fetchTasks,
+  fetchTaskById,
   updateTask,
   deleteTask,
 };

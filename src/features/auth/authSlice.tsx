@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import User, { LoginRegisterUser } from "../../models/User";
+import User, { LoginRegisterUser, updateUserPayload } from "../../models/User";
 import authService from "./authService";
 
 const userItem = localStorage.getItem("user");
@@ -103,6 +103,24 @@ export const authSlice = createSlice({
         state.user = null;
       });
   },
+});
+
+// update user info
+export const updateUser = createAsyncThunk<
+  User,
+  updateUserPayload,
+  { rejectValue: string }
+>("/updateUser", async (payload: updateUserPayload, thunkAPI) => {
+  try {
+    const { userId, updatedUser } = payload;
+    return await authService.updateUser(`/${userId}`, updatedUser);
+  } catch (error: any) {
+    const errorMessage =
+      (error.response && error.response && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    return thunkAPI.rejectWithValue(errorMessage);
+  }
 });
 
 export const { reset } = authSlice.actions;

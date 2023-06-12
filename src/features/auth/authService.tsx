@@ -30,8 +30,18 @@ const logout = () => {
   taskApi.defaults.headers.common["Authorization"] = null;
 };
 
+// update user info
+const updateUser = async (
+  userId: string,
+  updatedUser: Partial<User>
+): Promise<User> => {
+  const response = await userApi.put(`/${userId}`, updatedUser);
+  return response.data as User;
+}
+
 export default {
   register,
   login,
   logout,
+  updateUser,
 };

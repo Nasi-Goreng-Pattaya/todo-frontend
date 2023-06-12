@@ -14,4 +14,9 @@ export interface LoginRegisterUser {
   password: string;
 }
 
+export interface updateUserPayload {
+  userId: string;
+  updatedUser: Partial<User>;
+}
+
 export default User;

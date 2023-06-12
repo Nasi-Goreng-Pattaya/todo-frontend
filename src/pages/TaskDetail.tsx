@@ -24,6 +24,7 @@ import { Task, TaskJson, toTask } from "../models/Task";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store";
 import moment from "moment";
+import { taskCategories } from "../data/taskCategories";
 
 const styles: { [x: string]: React.CSSProperties } = {
   createdOnText: {
@@ -39,7 +40,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement | null, InputProps>(
   (props, ref) => <Input {...props} as="textarea" ref={ref} />
 );
 
-const selectData = ["Personal", "Work"].map((item) => ({
+const selectData = taskCategories.map((item) => ({
   label: item,
   value: item,
 }));
@@ -61,6 +62,7 @@ export function TaskDetail() {
     event.preventDefault();
     if (!passValidation) return;
     const formData = new FormData(event.currentTarget);
+    console.log(formData);
   };
 
   useEffect(() => {
@@ -101,13 +103,13 @@ export function TaskDetail() {
                       margin: "0rem 0.25rem",
                     }}
                   />
-                  <MdNotificationsActive
+                  {/* <MdNotificationsActive
                     style={{
                       width: "2rem",
                       height: "2rem",
                       margin: "0rem 0.25rem",
                     }}
-                  />
+                  /> */}
                   <MdDoneOutline
                     style={{
                       width: "2rem",

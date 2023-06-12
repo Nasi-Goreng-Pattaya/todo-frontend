@@ -113,7 +113,7 @@ export const updateUser = createAsyncThunk<
 >("/updateUser", async (payload: updateUserPayload, thunkAPI) => {
   try {
     const { userId, updatedUser } = payload;
-    return await authService.updateUser(`/${userId}`, updatedUser);
+    return await authService.updateUser(userId, updatedUser);
   } catch (error: any) {
     const errorMessage =
       (error.response && error.response && error.response.data.message) ||

@@ -1,4 +1,4 @@
-import { useState, FC, ChangeEvent } from "react";
+import { useState, FC, ChangeEvent, useEffect } from "react";
 import {
   Col,
   Row,
@@ -13,7 +13,11 @@ import {
 import Style from "../styles/Profile.module.css";
 import { FaRegEdit, FaSave } from "react-icons/fa";
 import { ImCancelCircle } from "react-icons/im";
-import User from "../models/User";
+import User, { LoginRegisterUser } from "../models/User";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../store";
+import { AuthState, login, updateUser } from "../features/auth/authSlice";
+import { updateUserPayload } from "../models/User";
 
 //mock data for user
 const user: User = {
@@ -115,6 +119,7 @@ const EditProfileSection: FC<ShowingProps & EditingProps> = ({
 }) => {
   const [formData, setFormData] = useState(userData);
   const toaster = useToaster();
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleInputChange = (value: any, event: any) => {
     setFormData((currFormData) => ({
@@ -155,7 +160,11 @@ const EditProfileSection: FC<ShowingProps & EditingProps> = ({
     }
     setUserData(formData);
     setIsEdit(false);
-    //code to send request to API
+    const userData: updateUserPayload = {
+      userId: formData._id,
+      updatedUser: formData,
+    };
+    dispatch(updateUser(userData));
   };
 
   const genderData = ["Male", "Female"].map((item) => ({
@@ -263,8 +272,28 @@ const EditProfileSection: FC<ShowingProps & EditingProps> = ({
 };
 
 const Profile = () => {
-  const [userData, setUserData] = useState<User>(user);
+  const [userData, setUserData] = useState<User>({
+    _id: "12345",
+    name: "Rick Astley",
+    email: "rickastley1234@gmail.com",
+    gender: "M",
+    birthDate: new Date("2000-12-31"),
+    avatar:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjBCWfqcMo0udmC_nv8VqFkh8Ej4oeC-GL7DLmwEbtoSrPdZkvUhiYBBZS-7G63iZg-WQ&usqp=CAU",
+    token: "12345",
+  });
   const [isEdit, setIsEdit] = useState<boolean>(false);
+
+  const { user, isLoading, isError, isSuccess, message } = useSelector<
+    RootState,
+    AuthState
+  >((state) => state.auth);
+
+  useEffect(() => {
+    setUserData(user);
+  }, []);
+
+  console.log(userData);
 
   return (
     <>

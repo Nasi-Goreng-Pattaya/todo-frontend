@@ -35,9 +35,9 @@ const updateUser = async (
   userId: string,
   updatedUser: Partial<User>
 ): Promise<User> => {
-  const response = await userApi.put(`/${userId}`, updatedUser);
+  const response = await userApi.patch(`/${userId}`, updatedUser);
   return response.data as User;
-}
+};
 
 export default {
   register,

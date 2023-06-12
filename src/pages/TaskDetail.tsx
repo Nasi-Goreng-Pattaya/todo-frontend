@@ -107,7 +107,7 @@ export function TaskDetail() {
                 <Form.Group controlId="dueDate">
                   <Form.ControlLabel>Due Date:</Form.ControlLabel>
                   <Form.Control
-                    format="hh:mmaa dd/MM/yyyy"
+                    format="yyyy-MM-dd HH:mm"
                     //@ts-ignore
                     defaultValue={new Date()}
                     ranges={[

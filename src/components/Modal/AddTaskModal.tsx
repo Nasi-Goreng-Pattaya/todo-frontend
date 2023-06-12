@@ -87,8 +87,8 @@ const AddTaskModal = ({
           formValue.priority === "low"
             ? "low"
             : formValue.priority === "medium"
-            ? "medium"
-            : "high",
+              ? "medium"
+              : "high",
       });
       return newTasks;
     });
@@ -206,7 +206,7 @@ const AddTaskModal = ({
           <Form.Group controlId="dueDate" style={{ margin: "10px 0" }}>
             <Form.ControlLabel>Due Date:</Form.ControlLabel>
             <Form.Control
-              format="hh:mmaa dd/MM/yyyy"
+              format="yyyy-MM-dd HH:mm"
               ranges={[
                 {
                   label: "Now",

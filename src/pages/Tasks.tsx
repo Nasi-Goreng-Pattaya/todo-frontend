@@ -158,8 +158,6 @@ const Tasks = () => {
       const result = await dispatch(fetchTasks());
       const task = result.payload as TaskJson[];
       if (!ignore) {
-        console.log(task);
-        console.log(toTaskArray(task));
         setTasks(toTaskArray(task));
       }
       return task;

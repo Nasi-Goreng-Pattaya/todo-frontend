@@ -243,14 +243,11 @@ export function TaskDetail() {
                   <Form.Control
                     format="yyyy-MM-dd HH:mm"
                     value={task?.dueDateTime}
-                    ranges={[
-                      {
-                        label: "Now",
-                        value: new Date(),
-                      },
-                    ]}
                     name="dueDate"
                     accepter={CustomDatePicker}
+                    shouldDisableDate={(date) => {
+                      return moment(date).isBefore(moment().subtract(1, "day"));
+                    }}
                     onChange={(dateTime) => {
                       const newTask = {
                         ...task,

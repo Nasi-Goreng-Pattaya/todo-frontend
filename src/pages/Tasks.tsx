@@ -15,14 +15,12 @@ import {
   FaTasks,
   FaRegCalendarAlt,
   FaRegArrowAltCircleDown,
-  FaChartPie,
 } from "react-icons/fa";
 import { BiCategory } from "react-icons/bi";
 import { FiPlay } from "react-icons/fi";
 import { MdDoneOutline, MdCloudDone } from "react-icons/md";
 import { useEffect, useState } from "react";
 import AddTaskModal from "../components/Modal/AddTaskModal";
-import mockTasksData from "../data/data";
 import { useNavigate } from "react-router-dom";
 import { Task, TaskJson, toTaskArray } from "../models/Task";
 import { useDispatch } from "react-redux";

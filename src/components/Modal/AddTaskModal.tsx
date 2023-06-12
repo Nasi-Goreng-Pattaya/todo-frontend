@@ -75,6 +75,7 @@ const AddTaskModal = ({
     const task = formValue as Task;
 
     await dispatch(createTask(task));
+    setOpenModal(false);
 
     setTasks((currentTasks) => {
       const newTasks = [...currentTasks];
@@ -94,7 +95,6 @@ const AddTaskModal = ({
       return newTasks;
     });
 
-    setOpenModal(false);
     setFormValue({
       title: "",
       category: "",

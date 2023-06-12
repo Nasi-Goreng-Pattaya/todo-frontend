@@ -132,6 +132,17 @@
   cursor: pointer;
 }
 
+.btn-shake-red {
+  background-color: transparent;
+  transition: 0.4s ease-out;
+}
+
+.btn-shake-red:hover {
+  color: #e43f3f;
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
 .green-cloud {
   color: #04a104;
   background-color: transparent;

@@ -16,7 +16,12 @@
 }
 
 .profile-pic-col {
+  display: block;
+}
+
+.profile-pic-row {
   display: flex;
+  justify-content: center;
 }
 
 .profile-pic {

@@ -60,6 +60,24 @@ export const logout = createAsyncThunk("auth/logout", () => {
   authService.logout();
 });
 
+// update user info
+export const updateUser = createAsyncThunk<
+  User,
+  updateUserPayload,
+  { rejectValue: string }
+>("/updateUser", async (payload: updateUserPayload, thunkAPI) => {
+  try {
+    const { userId, updatedUser } = payload;
+    return await authService.updateUser(userId, updatedUser);
+  } catch (error: any) {
+    const errorMessage =
+      (error.response && error.response && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    return thunkAPI.rejectWithValue(errorMessage);
+  }
+});
+
 export const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -101,26 +119,11 @@ export const authSlice = createSlice({
       })
       .addCase(logout.fulfilled, (state) => {
         state.user = null;
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.user = action.payload;
       });
   },
-});
-
-// update user info
-export const updateUser = createAsyncThunk<
-  User,
-  updateUserPayload,
-  { rejectValue: string }
->("/updateUser", async (payload: updateUserPayload, thunkAPI) => {
-  try {
-    const { userId, updatedUser } = payload;
-    return await authService.updateUser(userId, updatedUser);
-  } catch (error: any) {
-    const errorMessage =
-      (error.response && error.response && error.response.data.message) ||
-      error.message ||
-      error.toString();
-    return thunkAPI.rejectWithValue(errorMessage);
-  }
 });
 
 export const { reset } = authSlice.actions;

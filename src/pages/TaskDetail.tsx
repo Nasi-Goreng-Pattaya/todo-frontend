@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   Button,
@@ -14,14 +14,25 @@ import {
   Radio,
   RadioGroup,
   SelectPicker,
+  Toggle,
+  Tooltip,
+  Whisper,
 } from "rsuite";
+import Style from "../styles/Tasks.module.css";
 import FlexboxGridItem from "rsuite/esm/FlexboxGrid/FlexboxGridItem";
 import { MdNotificationsActive, MdDoneOutline } from "react-icons/md";
-import { BsTrash } from "react-icons/bs";
-import { fetchTaskById } from "../features/task/taskSlice";
-import { TaskJson } from "../models/Task";
+import { BsClipboardFill, BsClipboardPlusFill, BsTrash } from "react-icons/bs";
+import {
+  deleteTask,
+  fetchTaskById,
+  updateTask,
+} from "../features/task/taskSlice";
+import { Task, TaskJson, toTask } from "../models/Task";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store";
+import moment from "moment";
+import { taskCategories } from "../data/taskCategories";
+import { FiPlay } from "react-icons/fi";
 
 const styles: { [x: string]: React.CSSProperties } = {
   createdOnText: {
@@ -37,7 +48,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement | null, InputProps>(
   (props, ref) => <Input {...props} as="textarea" ref={ref} />
 );
 
-const selectData = ["Personal", "Work"].map((item) => ({
+const selectData = taskCategories.map((item) => ({
   label: item,
   value: item,
 }));
@@ -49,15 +60,18 @@ const CustomDatePicker = React.forwardRef<
 
 export function TaskDetail() {
   const { taskId } = useParams();
+  const [task, setTask] = useState<Task | null>(null);
   const dispatch = useDispatch<AppDispatch>();
 
-  const handleOnSubmit = (
+  const handleOnSubmit = async (
     passValidation: boolean,
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
     if (!passValidation) return;
-    const formData = new FormData(event.currentTarget);
+    if (taskId === undefined) return;
+    if (task === null) return;
+    await dispatch(updateTask({ taskId: taskId, updatedTask: task }));
   };
 
   useEffect(() => {
@@ -72,7 +86,7 @@ export function TaskDetail() {
       const result = await dispatch(fetchTaskById(taskId));
       const task = result.payload as TaskJson;
       if (!ignore) {
-        console.log(task);
+        setTask(toTask(task));
       }
       return task;
     }
@@ -82,6 +96,82 @@ export function TaskDetail() {
     };
   }, []);
 
+  function showStatusIcon() {
+    if (task?.status === "todo") {
+      return (
+        <Whisper
+          trigger="hover"
+          placement="right"
+          speaker={<Tooltip>Start doing</Tooltip>}
+        >
+          <button
+            className={Style["btn-shake-green"]}
+            onClick={(e) => {
+              setTask({ ...task, status: "inprogress" });
+            }}
+          >
+            <FiPlay
+              style={{
+                width: "2rem",
+                height: "2rem",
+                margin: "0rem 0.25rem",
+              }}
+            />
+          </button>
+        </Whisper>
+      );
+    }
+    if (task?.status === "inprogress") {
+      return (
+        <Whisper
+          trigger="hover"
+          placement="right"
+          speaker={<Tooltip>Mark as done</Tooltip>}
+        >
+          <button
+            className={Style["btn-shake-green"]}
+            onClick={(e) => {
+              setTask({ ...task, status: "completed" });
+            }}
+          >
+            <MdDoneOutline
+              style={{
+                width: "2rem",
+                height: "2rem",
+                margin: "0rem 0.25rem",
+              }}
+            />
+          </button>
+        </Whisper>
+      );
+    }
+    if (task?.status === "completed") {
+      return (
+        <Whisper
+          trigger="hover"
+          placement="right"
+          speaker={<Tooltip>Mark as To Do</Tooltip>}
+        >
+          <button
+            className={Style["btn-shake-green"]}
+            onClick={(e) => {
+              setTask({ ...task, status: "todo" });
+            }}
+          >
+            <BsClipboardPlusFill
+              style={{
+                width: "2rem",
+                height: "2rem",
+                margin: "0rem 0.25rem",
+              }}
+            />
+          </button>
+        </Whisper>
+      );
+    }
+    return null;
+  }
+
   return (
     <FlexboxGrid justify="center">
       <FlexboxGridItem as={Col} md={15} lg={12} xl={9} colspan={21}>
@@ -89,32 +179,44 @@ export function TaskDetail() {
           header={
             <>
               <FlexboxGrid justify="space-between" align="middle">
-                <h3>Task Name Here</h3>
+                <h3>{task?.title ?? "Loading Task..."}</h3>
                 <div>
-                  <BsTrash
-                    style={{
-                      width: "2rem",
-                      height: "1.85rem",
-                      margin: "0rem 0.25rem",
-                    }}
-                  />
-                  <MdNotificationsActive
+                  <Whisper
+                    trigger="hover"
+                    placement="right"
+                    speaker={<Tooltip>Delete Task</Tooltip>}
+                  >
+                    <button
+                      className={Style["btn-shake-red"]}
+                      onClick={(e) => {
+                        if (!taskId) return;
+                        dispatch(deleteTask(taskId));
+                      }}
+                    >
+                      <BsTrash
+                        style={{
+                          width: "2rem",
+                          height: "1.85rem",
+                          margin: "0rem 0.25rem",
+                        }}
+                      />
+                    </button>
+                  </Whisper>
+                  {showStatusIcon()}
+                  {/* <MdNotificationsActive
                     style={{
                       width: "2rem",
                       height: "2rem",
                       margin: "0rem 0.25rem",
                     }}
-                  />
-                  <MdDoneOutline
-                    style={{
-                      width: "2rem",
-                      height: "2rem",
-                      margin: "0rem 0.25rem",
-                    }}
-                  />
+                  /> */}
                 </div>
               </FlexboxGrid>
-              <p style={styles.createdOnText}>Created on: 11:59pm 24/5/2023</p>
+              <p style={styles.createdOnText}>
+                Created on:{" "}
+                {moment(task?.createdAt).format("HH:mma DD/M/YYYY") ??
+                  "Loading Task..."}
+              </p>
             </>
           }
           bordered
@@ -127,6 +229,11 @@ export function TaskDetail() {
                 rows={5}
                 name="content"
                 accepter={Textarea}
+                value={task?.content ?? "Loading Task Content..."}
+                onChange={(text) => {
+                  const newTask = { ...task, content: text } as Task;
+                  setTask(newTask);
+                }}
               ></Form.Control>
             </Form.Group>
             <FlexboxGrid>
@@ -135,8 +242,7 @@ export function TaskDetail() {
                   <Form.ControlLabel>Due Date:</Form.ControlLabel>
                   <Form.Control
                     format="yyyy-MM-dd HH:mm"
-                    //@ts-ignore
-                    defaultValue={new Date()}
+                    value={task?.dueDateTime}
                     ranges={[
                       {
                         label: "Now",
@@ -145,6 +251,13 @@ export function TaskDetail() {
                     ]}
                     name="dueDate"
                     accepter={CustomDatePicker}
+                    onChange={(dateTime) => {
+                      const newTask = {
+                        ...task,
+                        dueDateTime: dateTime,
+                      } as Task;
+                      setTask(newTask);
+                    }}
                   />
                 </Form.Group>
               </FlexboxGridItem>
@@ -155,19 +268,64 @@ export function TaskDetail() {
                     name="category"
                     style={styles.dropdownSelection}
                     accepter={SelectPicker}
+                    value={task?.category}
                     data={selectData}
+                    onChange={(category) => {
+                      const newTask = { ...task, category: category } as Task;
+                      setTask(newTask);
+                    }}
                   />
                 </Form.Group>
               </FlexboxGridItem>
             </FlexboxGrid>
-            <Form.Group controlId="priority">
-              <Form.ControlLabel>Priority:</Form.ControlLabel>
-              <Form.Control inline name="radio" accepter={RadioGroup}>
-                <Radio value="Low">Low</Radio>
-                <Radio value="Medium">Medium</Radio>
-                <Radio value="High">High</Radio>
-              </Form.Control>
-            </Form.Group>
+            <FlexboxGrid style={{ marginBottom: "1.5rem" }}>
+              <FlexboxGridItem colspan={12}>
+                <Form.Group controlId="priority">
+                  <Form.ControlLabel>Priority:</Form.ControlLabel>
+                  <Form.Control
+                    inline
+                    name="radio"
+                    accepter={RadioGroup}
+                    value={task?.priority}
+                    onChange={(priority) => {
+                      const newTask = { ...task, priority: priority } as Task;
+                      if (priority === "low") {
+                        newTask.hasReminder = false;
+                      }
+                      setTask(newTask);
+                    }}
+                  >
+                    <Radio value="low">Low</Radio>
+                    <Radio value="medium">Medium</Radio>
+                    <Radio value="high">High</Radio>
+                  </Form.Control>
+                </Form.Group>
+              </FlexboxGridItem>
+              <FlexboxGridItem
+                style={{
+                  display:
+                    task?.priority === "low" || task?.priority === null
+                      ? "none"
+                      : "flex",
+                }}
+              >
+                <Form.Group controlId="hasReminder">
+                  <Form.ControlLabel>Reminder:</Form.ControlLabel>
+                  <Form.Control
+                    name="hasReminder"
+                    accepter={Toggle}
+                    value={task?.hasReminder}
+                    onChange={(reminder) => {
+                      const newTask = {
+                        ...task,
+                        hasReminder: reminder,
+                      } as Task;
+                      setTask(newTask);
+                    }}
+                  ></Form.Control>
+                </Form.Group>
+              </FlexboxGridItem>
+            </FlexboxGrid>
             <FlexboxGrid justify="space-around">
               <FlexboxGridItem colspan={9}>
                 <Form.Group>

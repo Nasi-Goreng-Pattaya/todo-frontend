@@ -77,7 +77,7 @@ export const updateTask = createAsyncThunk<
 >("/updateTask", async (payload: updateTaskPayload, thunkAPI) => {
   try {
     const { taskId, updatedTask } = payload;
-    return await taskService.updateTask(`/${taskId}`, updatedTask);
+    return await taskService.updateTask(`${taskId}`, updatedTask);
   } catch (error: any) {
     const errorMessage =
       (error.response && error.response && error.response.data.message) ||
@@ -89,12 +89,12 @@ export const updateTask = createAsyncThunk<
 
 export const deleteTask = createAsyncThunk<
   Task,
-  updateTaskPayload,
+  string,
   { rejectValue: string }
->("/deleteTask", async (payload: updateTaskPayload, thunkAPI) => {
+>("/deleteTask", async (payload, thunkAPI) => {
   try {
-    const { taskId, updatedTask } = payload;
-    return await taskService.deleteTask(`/${taskId}`);
+    const taskId = payload;
+    return await taskService.deleteTask(`${taskId}`);
   } catch (error: any) {
     const errorMessage =
       (error.response && error.response && error.response.data.message) ||

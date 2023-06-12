@@ -19,6 +19,7 @@ import { Task } from "../../models/Task";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../store";
 import { createTask } from "../../features/task/taskSlice";
+import { taskCategories } from "../../data/taskCategories";
 
 // task schema
 const { StringType, BooleanType, DateType } = Schema.Types;
@@ -52,7 +53,7 @@ const AddTaskModal = ({
   const dispatch = useDispatch<AppDispatch>();
 
   // data selection for category
-  const selectData = ["Personal", "Work"].map((item) => ({
+  const selectData = taskCategories.map((item) => ({
     label: item,
     value: item,
   }));
@@ -87,8 +88,8 @@ const AddTaskModal = ({
           formValue.priority === "low"
             ? "low"
             : formValue.priority === "medium"
-              ? "medium"
-              : "high",
+            ? "medium"
+            : "high",
       });
       return newTasks;
     });

@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Task, Tasks, updateTaskPayload } from "../../models/Task";
-import taskService from "./taskService";
+import { Task, updateTaskPayload } from "../../models/Task";
 import User from "../../models/User";
+import taskService from "./taskService";
 
 const userItem = localStorage.getItem("user");
 const user: User | null = userItem ? JSON.parse(userItem) : null;
@@ -38,7 +38,7 @@ export const createTask = createAsyncThunk<Task, Task, { rejectValue: string }>(
 );
 
 export const fetchTasks = createAsyncThunk<
-  Tasks[],
+  Task[],
   void,
   { rejectValue: string }
 >("/", async (_, thunkAPI) => {
@@ -102,7 +102,7 @@ export const taskSlice = createSlice({
       //   .addCase(register.pending, (state) => {
       //     state.isLoading = true;
       //   })
-      .addCase(updateTask.fulfilled, (state, action) => {});
+      .addCase(updateTask.fulfilled, (state, action) => { });
     //   .addCase(register.rejected, (state, action) => {
     //     state.isLoading = false;
     //     state.isError = true;

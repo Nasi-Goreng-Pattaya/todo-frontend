@@ -1,5 +1,5 @@
-import { Tasks, Task } from "../../models/Task";
 import axios from "axios";
+import { Task } from "../../models/Task";
 import User from "../../models/User";
 
 const userItem = localStorage.getItem("user");

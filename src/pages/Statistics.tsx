@@ -7,6 +7,7 @@ import { TabBar } from "../components/Tab/TabBar";
 import { TabItem } from "../components/Tab/TabItem";
 import { TabPage } from "../components/Tab/TabPage";
 import { Task } from "../models/Task";
+import taskService from "../features/task/taskService";
 
 // function to prepare data for pie charts
 const getPieData = (tasks: Task[]): Array<any> => {
@@ -131,7 +132,7 @@ const getTimelineData = (tasks: Task[]) => {
   return timelineData;
 };
 
-const Statistics = ({ tasks }: { tasks: Task[] }) => {
+const Statistics = () => {
   type GraphDataType = {
     pieData: Array<any>;
     barLastWeekData: Array<[string, number]>;
@@ -139,6 +140,7 @@ const Statistics = ({ tasks }: { tasks: Task[] }) => {
     timelineData: Array<[string, number]>;
   };
 
+  const [tasks, setTasks] = useState<Task[]>([])
   const [active, setActive] = useState("pie"); // pie | bar | line
   const [isGraphDataLoading, setIsGraphDataLoading] = useState(true);
   const [graphData, setGraphData] = useState<GraphDataType>({
@@ -149,6 +151,9 @@ const Statistics = ({ tasks }: { tasks: Task[] }) => {
   });
 
   useEffect(() => {
+    // fetch tasks data
+    getTasks()
+    // update graphs
     setGraphData({
       pieData: getPieData(tasks),
       barLastWeekData: getBarLastWeekData(tasks),
@@ -156,7 +161,13 @@ const Statistics = ({ tasks }: { tasks: Task[] }) => {
       timelineData: getTimelineData(tasks),
     });
     setIsGraphDataLoading(false);
-  }, []);
+  }, [tasks]);
+
+  const getTasks = async () => {
+    const taskData = await taskService.fetchTasks()
+    console.log(taskData);
+    setTasks(taskData);
+  }
 
   // define available tabs
   const tabItems: TabItem[] = [

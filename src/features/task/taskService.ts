@@ -5,9 +5,9 @@ const taskApi = axios.create({
   baseURL: "http://localhost:5000/api/task",
 });
 
-const fetchTasks = async (): Promise<Tasks[]> => {
-  const response = await taskApi.get<Tasks[]>("/");
-  return response.data as Tasks[];
+const fetchTasks = async (): Promise<Task[]> => {
+  const response = await taskApi.get<Task[]>("/");
+  return response.data as Task[];
 };
 
 const createTasks = async (taskData: Task): Promise<Task> => {

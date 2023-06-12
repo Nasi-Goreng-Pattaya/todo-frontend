@@ -1,18 +1,16 @@
-import { Routes, Route, Link, Navigate, useLocation, useNavigate } from "react-router-dom";
-import { Navbar, Nav, FlexboxGrid } from "rsuite";
 import { BsFillPatchCheckFill, BsPersonFill } from "react-icons/bs";
+import { useDispatch } from "react-redux";
+import { Link, Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { FlexboxGrid, Nav, Navbar } from "rsuite";
+import { logout } from "./features/auth/authSlice";
 import Login from "./pages/Login";
-import Statistics from "./pages/Statistics";
-import Style from "./styles/App.module.css";
-import Tasks from "./pages/Tasks";
 import Profile from "./pages/Profile";
 import { Register } from "./pages/Register";
+import Statistics from "./pages/Statistics";
 import { TaskDetail } from "./pages/TaskDetail";
-import { Task } from "./models/Task";
-import mockTasksData from "./data/data";
-import { useDispatch } from "react-redux";
-import { logout } from "./features/auth/authSlice";
+import Tasks from "./pages/Tasks";
 import { AppDispatch } from "./store";
+import Style from "./styles/App.module.css";
 
 function App() {
   const location = useLocation();
@@ -70,7 +68,7 @@ function App() {
           <Route path="/tasks" element={<Tasks />} />
           <Route
             path="/statistics"
-            element={<Statistics tasks={mockTasksData} />}
+            element={<Statistics />}
           />
           <Route path="/profile" element={<Profile />} />
           <Route path="/register" element={<Register />} />

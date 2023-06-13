@@ -110,20 +110,6 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.user = action.payload;
-        // if (action.payload.avatar) {
-        //   // const concatenatedBuffer = new Uint8Array();
-        //   // avatar.data.reduce((acc, buffer) => [...acc, ...buffer], [])
-        //   const blob = new Blob([action.payload.avatar.data], {
-        //     type: "image/jpeg",
-        //   });
-        //   const file = new File([blob], "avatar.jpg", { type: "image/jpeg" });
-        //   console.log(file);
-        //   state.user.avatar = file;
-
-        //   // action.payload.avatar = file;
-        // }
-        // console.log(action.payload);
-
         state.message = "Login successful";
       })
       .addCase(login.rejected, (state, action) => {
@@ -135,15 +121,20 @@ export const authSlice = createSlice({
         state.user = null;
       })
       .addCase(updateUser.fulfilled, (state, action) => {
-        console.log("jaj");
-        console.log(action.payload);
-        state.user = action.payload;
         if (action.payload.avatar) {
-          const buffer = new Uint8Array(action.payload.avatar!.data);
-          const base64String: string = btoa(String.fromCharCode(...buffer));
-          console.log(base64String);
-          state.user.avatar = base64String;
+          // const buffer = new Uint8Array(action.payload.avatar!.data);
+          // const base64Image = String.fromCharCode(...buffer);
+
+          const uintArray = new Uint8Array(action.payload.avatar.data);
+          let binaryString = "";
+          uintArray.forEach((byte) => {
+            const arr = [byte];
+            binaryString += String.fromCharCode(...arr);
+          });
+          const base64Image = btoa(binaryString);
+          action.payload.avatar = base64Image;
         }
+        state.user = action.payload;
       });
   },
 });

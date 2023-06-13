@@ -50,7 +50,6 @@ const ShowProfileSection: FC<ShowingProps> = ({ setIsEdit }) => {
     ? moment(birthDate).format("ll")
     : "undefined";
 
-  console.log(avatar);
   return (
     <FlexboxGrid justify="center">
       <Col xs={23} md={21} lg={18} xl={16} className={Style["profile-section"]}>
@@ -171,21 +170,35 @@ const EditProfileSection: FC<ShowingProps> = ({ setIsEdit }) => {
   const handleLoadedPic = (event: ChangeEvent<HTMLInputElement>): void => {
     const file = event.target.files?.[0];
 
+    // if (file) {
+    //   const reader = new FileReader();
+    //   reader.onload = (e) => {
+    //     const result = e.target?.result as ArrayBuffer;
+    //     const buffer = new Uint8Array(result);
+    //     const base64Image = btoa(String.fromCharCode(...buffer));
+    //     console.log(base64Image);
+    //     updateFormDataPic(base64Image);
+    //   };
+    //   reader.readAsArrayBuffer(file);
+    // }
+
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
         const result = e.target?.result;
-        if (result instanceof ArrayBuffer) {
-          const buffer = new Uint8Array(result);
-          const base64String: string = btoa(String.fromCharCode(...buffer));
-          setFormData((currFormData) => ({
-            ...currFormData,
-            avatar: base64String,
-          }));
+        if (typeof result === "string") {
+          updateFormDataPic(result.split(",")[1]);
         }
       };
-      reader.readAsArrayBuffer(file);
+      reader.readAsDataURL(file);
     }
+  };
+
+  const updateFormDataPic = (base64String: string): void => {
+    setFormData((currFormData) => ({
+      ...currFormData,
+      avatar: base64String,
+    }));
   };
 
   const handleSaveProfile = () => {
@@ -203,13 +216,11 @@ const EditProfileSection: FC<ShowingProps> = ({ setIsEdit }) => {
       );
       return;
     }
-    console.log(formData);
 
     const userData: updateUserPayload = {
       userId: formData._id,
       updatedUser: formData,
     };
-    console.log(userData);
     dispatch(updateUser(userData));
     setIsEdit(false);
   };
@@ -218,22 +229,6 @@ const EditProfileSection: FC<ShowingProps> = ({ setIsEdit }) => {
     label: item,
     value: item,
   }));
-
-  // const fileToBase64Array = (file: File): string => {
-  //   const reader = new FileReader();
-  //   var res: string = "";
-  //   reader.onload = (e) => {
-  //     const result = e.target?.result as ArrayBuffer;
-  //     const buffer = new Uint8Array(result);
-  //     res = `data:image/jpeg;base64,${Buffer.from(buffer)?.toString("base64")}`;
-  //   };
-  //   reader.readAsArrayBuffer(file);
-  //   return res;
-  // };
-
-  // const avatarSrc = formData.avatar
-  //   ? fileToBase64Array(formData.avatar)
-  //   : defaultLogo;
 
   return (
     <FlexboxGrid justify="center">
@@ -368,7 +363,7 @@ const Profile = () => {
   //   console.log("render profile");
   // }, []);
 
-  console.log(user);
+  // console.log(user);
 
   return (
     <>

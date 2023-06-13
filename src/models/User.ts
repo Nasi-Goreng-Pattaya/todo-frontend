@@ -1,5 +1,3 @@
-import { Buffer } from "buffer";
-
 type User = {
   _id: string;
   name: string;
@@ -7,7 +5,7 @@ type User = {
   token: string;
   gender?: "M" | "F";
   birthDate?: Date | null;
-  avatar?: Buffer | null;
+  avatar?: string | null;
 };
 
 export interface LoginRegisterUser {

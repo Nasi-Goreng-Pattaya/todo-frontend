@@ -35,7 +35,7 @@ const user: User = {
 };
 
 type ShowingProps = {
-  userData: User;
+  // userData: User;
   setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
@@ -43,12 +43,14 @@ type EditingProps = {
   setUserData: React.Dispatch<React.SetStateAction<User>>;
 };
 
-const ShowProfileSection: FC<ShowingProps> = ({ userData, setIsEdit }) => {
-  const { name, email, gender, birthDate, avatar } = userData;
+const ShowProfileSection: FC<ShowingProps> = ({ setIsEdit }) => {
+  const { user } = useSelector<RootState, AuthState>((state) => state.auth);
+  const { name, email, gender, birthDate, avatar } = user!;
   const dateStr: string = birthDate
     ? moment(birthDate).format("ll")
     : "undefined";
 
+  console.log(avatar);
   return (
     <FlexboxGrid justify="center">
       <Col xs={23} md={21} lg={18} xl={16} className={Style["profile-section"]}>
@@ -59,11 +61,7 @@ const ShowProfileSection: FC<ShowingProps> = ({ userData, setIsEdit }) => {
           <Col xs={24} md={8} xl={6} className={Style["profile-pic-col"]}>
             <Row className={Style["profile-pic-row"]}>
               <img
-                src={
-                  avatar
-                    ? `data:image/jpeg;base64,${avatar?.toString("base64")}`
-                    : defaultLogo
-                }
+                src={avatar ? `data:image/jpeg;base64,${avatar}` : defaultLogo}
                 alt="Profile picture"
                 className={Style["profile-pic"]}
               />
@@ -119,12 +117,17 @@ const ShowProfileSection: FC<ShowingProps> = ({ userData, setIsEdit }) => {
   );
 };
 
-const EditProfileSection: FC<ShowingProps & EditingProps> = ({
-  userData,
-  setIsEdit,
-  setUserData,
-}) => {
-  const [formData, setFormData] = useState(userData);
+const EditProfileSection: FC<ShowingProps> = ({ setIsEdit }) => {
+  const { user } = useSelector<RootState, AuthState>((state) => state.auth);
+  const [formData, setFormData] = useState<User>({
+    _id: "12345",
+    name: "John Doe",
+    email: "johndoe@gmail.com",
+    gender: "M",
+    birthDate: new Date("2000-12-31"),
+    avatar: null,
+    token: "12345",
+  });
   const toaster = useToaster();
   const dispatch = useDispatch<AppDispatch>();
   // console.log(userData);
@@ -134,8 +137,8 @@ const EditProfileSection: FC<ShowingProps & EditingProps> = ({
   // console.log(buffer);
 
   useEffect(() => {
-    setFormData(userData);
-    if (userData.birthDate == null) {
+    setFormData(user!);
+    if (user?.birthDate == null) {
       setFormData((currFormData) => ({
         ...currFormData,
         birthDate: new Date(),
@@ -167,15 +170,19 @@ const EditProfileSection: FC<ShowingProps & EditingProps> = ({
 
   const handleLoadedPic = (event: ChangeEvent<HTMLInputElement>): void => {
     const file = event.target.files?.[0];
+
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        const result = e.target?.result as ArrayBuffer;
-        const buffer = new Uint8Array(result);
-        setFormData((currFormData) => ({
-          ...currFormData,
-          avatar: Buffer.from(buffer),
-        }));
+        const result = e.target?.result;
+        if (result instanceof ArrayBuffer) {
+          const buffer = new Uint8Array(result);
+          const base64String: string = btoa(String.fromCharCode(...buffer));
+          setFormData((currFormData) => ({
+            ...currFormData,
+            avatar: base64String,
+          }));
+        }
       };
       reader.readAsArrayBuffer(file);
     }
@@ -198,19 +205,35 @@ const EditProfileSection: FC<ShowingProps & EditingProps> = ({
     }
     console.log(formData);
 
-    setUserData(formData);
-    setIsEdit(false);
     const userData: updateUserPayload = {
       userId: formData._id,
       updatedUser: formData,
     };
+    console.log(userData);
     dispatch(updateUser(userData));
+    setIsEdit(false);
   };
 
   const genderData = ["Male", "Female"].map((item) => ({
     label: item,
     value: item,
   }));
+
+  // const fileToBase64Array = (file: File): string => {
+  //   const reader = new FileReader();
+  //   var res: string = "";
+  //   reader.onload = (e) => {
+  //     const result = e.target?.result as ArrayBuffer;
+  //     const buffer = new Uint8Array(result);
+  //     res = `data:image/jpeg;base64,${Buffer.from(buffer)?.toString("base64")}`;
+  //   };
+  //   reader.readAsArrayBuffer(file);
+  //   return res;
+  // };
+
+  // const avatarSrc = formData.avatar
+  //   ? fileToBase64Array(formData.avatar)
+  //   : defaultLogo;
 
   return (
     <FlexboxGrid justify="center">
@@ -224,9 +247,7 @@ const EditProfileSection: FC<ShowingProps & EditingProps> = ({
               <img
                 src={
                   formData.avatar
-                    ? `data:image/jpeg;base64,${formData.avatar?.toString(
-                        "base64"
-                      )}`
+                    ? `data:image/jpeg;base64,${formData.avatar}`
                     : defaultLogo
                 }
                 alt="Profile picture"
@@ -329,36 +350,32 @@ const EditProfileSection: FC<ShowingProps & EditingProps> = ({
 };
 
 const Profile = () => {
-  const [userData, setUserData] = useState<User>({
-    _id: "12345",
-    name: "John Doe",
-    email: "johndoe@gmail.com",
-    gender: "M",
-    birthDate: new Date("2000-12-31"),
-    avatar: null,
-    token: "12345",
-  });
+  // const [userData, setUserData] = useState<User>({
+  //   _id: "12345",
+  //   name: "John Doe",
+  //   email: "johndoe@gmail.com",
+  //   gender: "M",
+  //   birthDate: new Date("2000-12-31"),
+  //   avatar: null,
+  //   token: "12345",
+  // });
   const [isEdit, setIsEdit] = useState<boolean>(false);
 
-  const { user, isLoading, isError, isSuccess, message } = useSelector<
-    RootState,
-    AuthState
-  >((state) => state.auth);
+  const { user } = useSelector<RootState, AuthState>((state) => state.auth);
 
-  useEffect(() => {
-    setUserData(user);
-  }, []);
+  // useEffect(() => {
+  //   setUserData(user);
+  //   console.log("render profile");
+  // }, []);
+
+  console.log(user);
 
   return (
     <>
       {isEdit ? (
-        <EditProfileSection
-          userData={userData}
-          setIsEdit={setIsEdit}
-          setUserData={setUserData}
-        />
+        <EditProfileSection setIsEdit={setIsEdit} />
       ) : (
-        <ShowProfileSection userData={userData} setIsEdit={setIsEdit} />
+        <ShowProfileSection setIsEdit={setIsEdit} />
       )}
     </>
   );

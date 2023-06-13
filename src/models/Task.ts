@@ -1,5 +1,5 @@
 export type Task = {
-  taskId: string;
+  _id: string;
   priority: "low" | "medium" | "high";
   hasReminder: boolean;
   reminderDateTime: Date | null;
@@ -30,7 +30,7 @@ export type TaskJson = {
 };
 
 export interface updateTaskPayload {
-  taskId: string;
+  _id: string;
   updatedTask: Partial<Task>;
 }
 

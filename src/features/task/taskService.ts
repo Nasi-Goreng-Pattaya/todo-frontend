@@ -39,13 +39,6 @@ const deleteTask = async (taskId: string): Promise<Task> => {
   return response.data as Task;
 };
 
-// export function getToken() {
-//   const user = localStorage.getItem("user");
-//   if (!user) return;
-//   const userObj = JSON.parse(user);
-//   return userObj.token;
-// }
-
 export default {
   createTasks,
   fetchTasks,

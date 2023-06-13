@@ -76,8 +76,8 @@ export const updateTask = createAsyncThunk<
   { rejectValue: string }
 >("/updateTask", async (payload: updateTaskPayload, thunkAPI) => {
   try {
-    const { taskId, updatedTask } = payload;
-    return await taskService.updateTask(`${taskId}`, updatedTask);
+    const { _id, updatedTask } = payload;
+    return await taskService.updateTask(`${_id}`, updatedTask);
   } catch (error: any) {
     const errorMessage =
       (error.response && error.response && error.response.data.message) ||
@@ -116,32 +116,71 @@ export const taskSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      //   .addCase(register.pending, (state) => {
-      //     state.isLoading = true;
-      //   })
-      .addCase(updateTask.fulfilled, (state, action) => {});
-    //   .addCase(register.rejected, (state, action) => {
-    //     state.isLoading = false;
-    //     state.isError = true;
-    //     state.message = action.payload as string;
-    //   })
-    //   .addCase(login.pending, (state) => {
-    //     state.isLoading = true;
-    //   })
-    //   .addCase(login.fulfilled, (state, action) => {
-    //     state.isLoading = false;
-    //     state.isSuccess = true;
-    //     state.user = action.payload;
-    //     state.message = "Login successful";
-    //   })
-    //   .addCase(login.rejected, (state, action) => {
-    //     state.isError = true;
-    //     state.isLoading = false;
-    //     state.message = action.payload as string;
-    //   })
-    //   .addCase(logout.fulfilled, (state) => {
-    //     state.user = null;
-    //   });
+      .addCase(fetchTasks.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchTasks.fulfilled, (state) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.message = "Task fetched successfully!";
+      })
+      .addCase(fetchTasks.rejected, (state, action) => {
+        state.isError = true;
+        state.isLoading = false;
+        state.message = action.payload as string;
+      })
+      .addCase(fetchTaskById.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchTaskById.fulfilled, (state) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.message = "Task fetched by ID is successful!";
+      })
+      .addCase(fetchTaskById.rejected, (state, action) => {
+        state.isError = true;
+        state.isLoading = false;
+        state.message = action.payload as string;
+      })
+      .addCase(createTask.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(createTask.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.message = "Task created successfully!";
+      })
+      .addCase(createTask.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload as string;
+      })
+      .addCase(updateTask.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateTask.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.message = "Task updated successfully!";
+      })
+      .addCase(updateTask.rejected, (state, action) => {
+        state.isError = true;
+        state.isLoading = false;
+        state.message = action.payload as string;
+      })
+      .addCase(deleteTask.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteTask.fulfilled, (state) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.message = "Task deleted successfully!";
+      })
+      .addCase(deleteTask.rejected, (state, action) => {
+        state.isError = true;
+        state.isLoading = false;
+        state.message = action.payload as string;
+      });
   },
 });
 

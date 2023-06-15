@@ -1,4 +1,4 @@
-import { useState, FC, ChangeEvent } from "react";
+import { useState, FC, ChangeEvent, useEffect } from "react";
 import {
   Col,
   Row,
@@ -9,11 +9,19 @@ import {
   DatePicker,
   useToaster,
   Message,
+  Uploader,
 } from "rsuite";
 import Style from "../styles/Profile.module.css";
 import { FaRegEdit, FaSave } from "react-icons/fa";
 import { ImCancelCircle } from "react-icons/im";
-import User from "../models/User";
+import User, { LoginRegisterUser } from "../models/User";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../store";
+import { AuthState, login, updateUser } from "../features/auth/authSlice";
+import { updateUserPayload } from "../models/User";
+import moment from "moment";
+import { Buffer } from "buffer";
+import defaultLogo from "../assets/default-avatar-photo.jpg";
 
 //mock data for user
 const user: User = {
@@ -22,13 +30,12 @@ const user: User = {
   email: "rickastley1234@gmail.com",
   gender: "M",
   birthDate: new Date("2000-12-31"),
-  avatar:
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjBCWfqcMo0udmC_nv8VqFkh8Ej4oeC-GL7DLmwEbtoSrPdZkvUhiYBBZS-7G63iZg-WQ&usqp=CAU",
+  avatar: null,
   token: "12345",
 };
 
 type ShowingProps = {
-  userData: User;
+  // userData: User;
   setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
@@ -36,14 +43,17 @@ type EditingProps = {
   setUserData: React.Dispatch<React.SetStateAction<User>>;
 };
 
-const ShowProfileSection: FC<ShowingProps> = ({ userData, setIsEdit }) => {
-  const { name, email, gender, birthDate, avatar } = userData;
-  const dateStr: string =
-    birthDate?.getDate() +
-    "/" +
-    (birthDate ? birthDate?.getMonth() + 1 : 0) +
-    "/" +
-    birthDate?.getFullYear();
+const ShowProfileSection: FC<ShowingProps> = ({ setIsEdit }) => {
+  const { user } = useSelector<RootState, AuthState>((state) => state.auth);
+  const { name, email, gender, birthDate } = user!;
+  console.log(user);
+  const avatar = user?.avatar?.data
+    ? btoa(String.fromCharCode(...new Uint8Array(user?.avatar?.data)))
+    : user?.avatar;
+  const dateStr: string = birthDate
+    ? moment(birthDate).format("ll")
+    : "undefined";
+
   return (
     <FlexboxGrid justify="center">
       <Col xs={23} md={21} lg={18} xl={16} className={Style["profile-section"]}>
@@ -52,11 +62,13 @@ const ShowProfileSection: FC<ShowingProps> = ({ userData, setIsEdit }) => {
         </Row>
         <Row>
           <Col xs={24} md={8} xl={6} className={Style["profile-pic-col"]}>
-            <img
-              src={avatar}
-              alt="Profile picture"
-              className={Style["profile-pic"]}
-            />
+            <Row className={Style["profile-pic-row"]}>
+              <img
+                src={avatar ? `data:image/jpeg;base64,${avatar}` : defaultLogo}
+                alt="Profile picture"
+                className={Style["profile-pic"]}
+              />
+            </Row>
           </Col>
           <Col xs={24} md={16} xl={18} className={Style["details"]}>
             <Row>
@@ -108,13 +120,40 @@ const ShowProfileSection: FC<ShowingProps> = ({ userData, setIsEdit }) => {
   );
 };
 
-const EditProfileSection: FC<ShowingProps & EditingProps> = ({
-  userData,
-  setIsEdit,
-  setUserData,
-}) => {
-  const [formData, setFormData] = useState(userData);
+const EditProfileSection: FC<ShowingProps> = ({ setIsEdit }) => {
+  const { user } = useSelector<RootState, AuthState>((state) => state.auth);
+  const [formData, setFormData] = useState<User>({
+    _id: "12345",
+    name: "John Doe",
+    email: "johndoe@gmail.com",
+    gender: "M",
+    birthDate: new Date("2000-12-31"),
+    avatar: null,
+    token: "12345",
+  });
   const toaster = useToaster();
+  const dispatch = useDispatch<AppDispatch>();
+  // console.log(userData);
+  // console.log(formData);
+
+  // const [buffer, setBuffer] = useState<Uint8Array | null>();
+  // console.log(buffer);
+
+  useEffect(() => {
+    setFormData({
+      ...user,
+      avatar:
+        typeof user?.avatar === "object"
+          ? btoa(String.fromCharCode(...new Uint8Array(user?.avatar?.data)))
+          : user?.avatar,
+    });
+    if (user?.birthDate == null) {
+      setFormData((currFormData) => ({
+        ...currFormData,
+        birthDate: new Date(),
+      }));
+    }
+  }, []);
 
   const handleInputChange = (value: any, event: any) => {
     setFormData((currFormData) => ({
@@ -138,7 +177,41 @@ const EditProfileSection: FC<ShowingProps & EditingProps> = ({
     }));
   };
 
-  const handleSaveProfile = () => {
+  const handleLoadedPic = (event: ChangeEvent<HTMLInputElement>): void => {
+    const file = event.target.files?.[0];
+
+    // if (file) {
+    //   const reader = new FileReader();
+    //   reader.onload = (e) => {
+    //     const result = e.target?.result as ArrayBuffer;
+    //     const buffer = new Uint8Array(result);
+    //     const base64Image = btoa(String.fromCharCode(...buffer));
+    //     console.log(base64Image);
+    //     updateFormDataPic(base64Image);
+    //   };
+    //   reader.readAsArrayBuffer(file);
+    // }
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result;
+        if (typeof result === "string") {
+          updateFormDataPic(result.split(",")[1]);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const updateFormDataPic = (base64String: string): void => {
+    setFormData((currFormData) => ({
+      ...currFormData,
+      avatar: base64String,
+    }));
+  };
+
+  const handleSaveProfile = async () => {
     const expression: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
     const isValidEmail: boolean = expression.test(formData.email);
     if (!isValidEmail) {
@@ -153,9 +226,13 @@ const EditProfileSection: FC<ShowingProps & EditingProps> = ({
       );
       return;
     }
-    setUserData(formData);
+
+    const userData: updateUserPayload = {
+      userId: formData._id,
+      updatedUser: formData,
+    };
+    await dispatch(updateUser(userData));
     setIsEdit(false);
-    //code to send request to API
   };
 
   const genderData = ["Male", "Female"].map((item) => ({
@@ -171,11 +248,27 @@ const EditProfileSection: FC<ShowingProps & EditingProps> = ({
         </Row>
         <Row>
           <Col xs={24} md={8} xl={6} className={Style["profile-pic-col"]}>
-            <img
-              src={formData.avatar}
-              alt="Profile picture"
-              className={Style["profile-pic"]}
-            />
+            <Row className={Style["profile-pic-row"]}>
+              <img
+                src={
+                  formData.avatar
+                    ? `data:image/jpeg;base64,${formData.avatar}`
+                    : defaultLogo
+                }
+                alt="Profile picture"
+                className={Style["profile-pic"]}
+              />
+            </Row>
+            <Row
+              className={Style["profile-pic-row"]}
+              style={{ fontSize: "10px" }}
+            >
+              <input
+                type="file"
+                accept=".png, .jpeg"
+                onChange={handleLoadedPic}
+              />
+            </Row>
           </Col>
           <Col xs={24} md={16} xl={18} className={Style["details"]}>
             <Row>
@@ -225,10 +318,9 @@ const EditProfileSection: FC<ShowingProps & EditingProps> = ({
                 Birth date:
               </Col>
               <Col xs={16} className={Style["detail-info"]}>
-                {/* {formData.birthDate?.toLocaleDateString()} */}
                 <DatePicker
                   format="dd/MM/yyyy"
-                  value={formData.birthDate}
+                  value={new Date(formData?.birthDate)}
                   cleanable={false}
                   onSelect={handleSelectedBirthDate}
                   size="lg"
@@ -263,19 +355,32 @@ const EditProfileSection: FC<ShowingProps & EditingProps> = ({
 };
 
 const Profile = () => {
-  const [userData, setUserData] = useState<User>(user);
+  // const [userData, setUserData] = useState<User>({
+  //   _id: "12345",
+  //   name: "John Doe",
+  //   email: "johndoe@gmail.com",
+  //   gender: "M",
+  //   birthDate: new Date("2000-12-31"),
+  //   avatar: null,
+  //   token: "12345",
+  // });
   const [isEdit, setIsEdit] = useState<boolean>(false);
+
+  const { user } = useSelector<RootState, AuthState>((state) => state.auth);
+
+  // useEffect(() => {
+  //   setUserData(user);
+  //   console.log("render profile");
+  // }, []);
+
+  // console.log(user);
 
   return (
     <>
       {isEdit ? (
-        <EditProfileSection
-          userData={userData}
-          setIsEdit={setIsEdit}
-          setUserData={setUserData}
-        />
+        <EditProfileSection setIsEdit={setIsEdit} />
       ) : (
-        <ShowProfileSection userData={userData} setIsEdit={setIsEdit} />
+        <ShowProfileSection setIsEdit={setIsEdit} />
       )}
     </>
   );

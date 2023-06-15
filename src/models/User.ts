@@ -5,7 +5,7 @@ type User = {
   token: string;
   gender?: "M" | "F";
   birthDate?: Date | null;
-  avatar?: string;
+  avatar?: string | null;
 };
 
 export interface LoginRegisterUser {

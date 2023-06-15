@@ -45,7 +45,11 @@ type EditingProps = {
 
 const ShowProfileSection: FC<ShowingProps> = ({ setIsEdit }) => {
   const { user } = useSelector<RootState, AuthState>((state) => state.auth);
-  const { name, email, gender, birthDate, avatar } = user!;
+  const { name, email, gender, birthDate } = user!;
+  console.log(user);
+  const avatar = user?.avatar?.data
+    ? btoa(String.fromCharCode(...new Uint8Array(user?.avatar?.data)))
+    : user?.avatar;
   const dateStr: string = birthDate
     ? moment(birthDate).format("ll")
     : "undefined";
@@ -136,7 +140,13 @@ const EditProfileSection: FC<ShowingProps> = ({ setIsEdit }) => {
   // console.log(buffer);
 
   useEffect(() => {
-    setFormData(user!);
+    setFormData({
+      ...user,
+      avatar:
+        typeof user?.avatar === "object"
+          ? btoa(String.fromCharCode(...new Uint8Array(user?.avatar?.data)))
+          : user?.avatar,
+    });
     if (user?.birthDate == null) {
       setFormData((currFormData) => ({
         ...currFormData,
@@ -201,7 +211,7 @@ const EditProfileSection: FC<ShowingProps> = ({ setIsEdit }) => {
     }));
   };
 
-  const handleSaveProfile = () => {
+  const handleSaveProfile = async () => {
     const expression: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
     const isValidEmail: boolean = expression.test(formData.email);
     if (!isValidEmail) {
@@ -221,7 +231,7 @@ const EditProfileSection: FC<ShowingProps> = ({ setIsEdit }) => {
       userId: formData._id,
       updatedUser: formData,
     };
-    dispatch(updateUser(userData));
+    await dispatch(updateUser(userData));
     setIsEdit(false);
   };
 
@@ -255,7 +265,7 @@ const EditProfileSection: FC<ShowingProps> = ({ setIsEdit }) => {
             >
               <input
                 type="file"
-                accept=".png, .jpg, .jpeg"
+                accept=".png, .jpeg"
                 onChange={handleLoadedPic}
               />
             </Row>

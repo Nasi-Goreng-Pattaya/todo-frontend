@@ -36,8 +36,10 @@ const updateUser = async (
   updatedUser: Partial<User>
 ): Promise<User> => {
   const response = await userApi.patch(`/${userId}`, updatedUser);
+  const responseData = JSON.stringify(response.data);
+  const responseJSON = JSON.parse(responseData);
   localStorage.setItem("user", JSON.stringify(response.data));
-  return response.data as User;
+  return responseJSON as User;
 };
 
 export default {

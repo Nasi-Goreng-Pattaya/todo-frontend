@@ -44,9 +44,9 @@ type EditingProps = {
 };
 
 const ShowProfileSection: FC<ShowingProps> = ({ setIsEdit }) => {
-  const { user } = useSelector<RootState, AuthState>((state) => state.auth);
+  const userItem = localStorage.getItem("user");
+  const user: User | null = userItem ? JSON.parse(userItem) : null;
   const { name, email, gender, birthDate } = user!;
-  console.log(user);
   const avatar = user?.avatar?.data
     ? btoa(String.fromCharCode(...new Uint8Array(user?.avatar?.data)))
     : user?.avatar;
@@ -121,7 +121,8 @@ const ShowProfileSection: FC<ShowingProps> = ({ setIsEdit }) => {
 };
 
 const EditProfileSection: FC<ShowingProps> = ({ setIsEdit }) => {
-  const { user } = useSelector<RootState, AuthState>((state) => state.auth);
+  const userItem = localStorage.getItem("user");
+  const user: User | null = userItem ? JSON.parse(userItem) : null;
   const [formData, setFormData] = useState<User>({
     _id: "12345",
     name: "John Doe",

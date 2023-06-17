@@ -15,6 +15,7 @@ import {
   Form,
   Input,
   InputProps,
+  Message,
   Modal,
   Panel,
   Radio,
@@ -24,6 +25,7 @@ import {
   Toggle,
   Tooltip,
   Whisper,
+  useToaster,
 } from "rsuite";
 import FlexboxGridItem from "rsuite/esm/FlexboxGrid/FlexboxGridItem";
 import { taskCategories } from "../data/taskCategories";
@@ -59,6 +61,10 @@ const CustomDatePicker = React.forwardRef<
   DatePickerProps
 >((props, ref) => <DatePicker {...props} ref={ref} />);
 
+function timeout(delay: number) {
+  return new Promise((res) => setTimeout(res, delay));
+}
+
 export function TaskDetail() {
   const { taskId } = useParams();
   const [task, setTask] = useState<Task | null>(null);
@@ -67,6 +73,7 @@ export function TaskDetail() {
 
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const toaster = useToaster();
 
   const handleOnSubmit = async (
     passValidation: boolean,
@@ -113,6 +120,16 @@ export function TaskDetail() {
       }
       const result = await dispatch(fetchTaskById(taskId));
       const task = result.payload as TaskJson;
+      if (task?._id === undefined || task?._id === null) {
+        await toaster.push(
+          <Message showIcon type="error">
+            Task not found.
+          </Message>,
+          { placement: "bottomEnd" }
+        );
+        await timeout(1500);
+        navigate(-1);
+      }
       if (!ignore) {
         setTask(toTask(task));
       }

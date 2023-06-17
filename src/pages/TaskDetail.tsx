@@ -19,6 +19,7 @@ import {
   Panel,
   Radio,
   RadioGroup,
+  Schema,
   SelectPicker,
   Toggle,
   Tooltip,
@@ -78,13 +79,13 @@ export function TaskDetail() {
     const taskUpdated = await dispatch(
       updateTask({ taskId: taskId, updatedTask: task })
     );
-    console.log(taskUpdated);
     if (
       taskUpdated.type === "/updateTask/rejected" &&
       taskUpdated.payload ===
         "Validation failed: dueDateTime: Due date cannot be in the past"
     ) {
       setDueDateFormError(taskUpdated.payload as string);
+      return;
     }
     // navigate to task list page once the changes were saved
     navigate(-1);
@@ -270,6 +271,7 @@ export function TaskDetail() {
                       format="yyyy-MM-dd HH:mm"
                       value={task?.dueDateTime}
                       name="dueDate"
+                      errorMessage={dueDateFormError}
                       accepter={CustomDatePicker}
                       shouldDisableDate={(date) => {
                         return moment(date).isBefore(
@@ -277,6 +279,9 @@ export function TaskDetail() {
                         );
                       }}
                       onChange={(dateTime) => {
+                        if (dateTime === null) {
+                          dateTime = new Date();
+                        }
                         const newTask = {
                           ...task,
                           dueDateTime: dateTime,

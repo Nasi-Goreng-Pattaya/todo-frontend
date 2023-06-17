@@ -27,6 +27,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store";
 import { fetchTasks, updateTask } from "../features/task/taskSlice";
 import { useImmer, Updater } from "use-immer";
+import moment from "moment";
 
 // empty task list alert section
 const EmptyTasksList = ({ active }: { active: string }) => {
@@ -55,11 +56,9 @@ const SingleTask = ({
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const date = task.dueDateTime;
+  const date = moment(task.dueDateTime);
   const dateString = `
-    ${date.getDate()}/${date.getMonth()}/${date.getFullYear()} ${date.getHours()}:${
-    date.getMinutes() / 10 === 0 ? "0" + date.getMinutes() : date.getMinutes()
-  }`;
+    ${date.day()}/${date.month()}/${date.year()} ${date.hours()}:${date.minutes()}`;
 
   const changeTaskStatus = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,

@@ -31,6 +31,7 @@ const updateTask = async (
   updatedTask: Partial<Task>
 ): Promise<Task> => {
   const response = await taskApi.put("/" + taskId, updatedTask);
+  console.log(response);
   return response.data as Task;
 };
 

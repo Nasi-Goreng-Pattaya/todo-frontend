@@ -225,8 +225,9 @@ export function TaskDetail() {
               </FlexboxGrid>
               <p style={styles.createdOnText}>
                 Created on:{" "}
-                {moment(task?.createdAt).format("HH:mma DD/M/YYYY") ??
-                  "Loading Task..."}
+                {task !== null && task !== undefined
+                  ? moment(task.createdAt).format("HH:mma DD/M/YYYY")
+                  : "Loading Task..."}
               </p>
             </>
           }

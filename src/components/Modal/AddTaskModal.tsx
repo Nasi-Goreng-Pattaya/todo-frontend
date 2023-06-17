@@ -13,13 +13,14 @@ import {
   DatePickerProps,
   DatePicker,
 } from "rsuite";
-import { useState, forwardRef, memo } from "react";
+import { useState, forwardRef, memo, useRef } from "react";
 import FlexboxGridItem from "rsuite/esm/FlexboxGrid/FlexboxGridItem";
 import { Task } from "../../models/Task";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../store";
 import { createTask } from "../../features/task/taskSlice";
 import { taskCategories } from "../../data/taskCategories";
+import moment from "moment";
 
 // task schema
 const { StringType, BooleanType, DateType } = Schema.Types;
@@ -49,6 +50,7 @@ const AddTaskModal = ({
     hasReminder: false,
     dueDateTime: new Date(),
   });
+  const [dueDateFormError, setDueDateFormError] = useState<string>("");
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -74,7 +76,17 @@ const AddTaskModal = ({
 
     const task = formValue as Task;
 
-    await dispatch(createTask(task));
+    const taskCreated = await dispatch(createTask(task));
+
+    if (
+      taskCreated.type === "//rejected" &&
+      taskCreated.payload ===
+        "Task validation failed: dueDateTime: Due date cannot be in the past"
+    ) {
+      setDueDateFormError(taskCreated.payload as string);
+      return;
+    }
+
     setOpenModal(false);
 
     setTasks((currentTasks) => {
@@ -216,8 +228,12 @@ const AddTaskModal = ({
               ]}
               name="dueDate"
               accepter={CustomDatePicker}
+              shouldDisableDate={(date) => {
+                return moment(date).isBefore(moment().subtract(1, "day"));
+              }}
               onSelect={(value) => setValue("dueDateTime", value)}
               value={formValue.dueDateTime}
+              errorMessage={dueDateFormError}
             />
           </Form.Group>
           <Form.Group style={{ marginTop: "20px" }}>

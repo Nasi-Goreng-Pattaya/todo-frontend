@@ -61,6 +61,7 @@ const CustomDatePicker = React.forwardRef<
 export function TaskDetail() {
   const { taskId } = useParams();
   const [task, setTask] = useState<Task | null>(null);
+  const [dueDateFormError, setDueDateFormError] = useState<string>("");
   const dispatch = useDispatch<AppDispatch>();
 
   const handleOnSubmit = async (
@@ -71,7 +72,17 @@ export function TaskDetail() {
     if (!passValidation) return;
     if (taskId === undefined) return;
     if (task === null) return;
-    await dispatch(updateTask({ taskId: taskId, updatedTask: task }));
+    const taskUpdated = await dispatch(
+      updateTask({ taskId: taskId, updatedTask: task })
+    );
+    console.log(taskUpdated);
+    if (
+      taskUpdated.type === "/updateTask/rejected" &&
+      taskUpdated.payload ===
+        "Validation failed: dueDateTime: Due date cannot be in the past"
+    ) {
+      setDueDateFormError(taskUpdated.payload as string);
+    }
   };
 
   useEffect(() => {
@@ -244,6 +255,7 @@ export function TaskDetail() {
                     format="yyyy-MM-dd HH:mm"
                     value={task?.dueDateTime}
                     name="dueDate"
+                    errorMessage={dueDateFormError}
                     accepter={CustomDatePicker}
                     shouldDisableDate={(date) => {
                       return moment(date).isBefore(moment().subtract(1, "day"));

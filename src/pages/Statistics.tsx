@@ -142,8 +142,8 @@ const Statistics = () => {
     timelineData: Array<[string, number]>;
   };
 
-  const dispatch = useDispatch<AppDispatch>()
-  const [tasks, setTasks] = useState<Task[]>([])
+  const dispatch = useDispatch<AppDispatch>();
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [active, setActive] = useState("pie"); // pie | bar | line
   const [isGraphDataLoading, setIsGraphDataLoading] = useState(true);
   const [graphData, setGraphData] = useState<GraphDataType>({
@@ -164,7 +164,7 @@ const Statistics = () => {
       const task = result.payload as TaskJson[];
 
       if (!ignore) {
-        const taskData = toTaskArray(task)
+        const taskData = toTaskArray(task);
         setTasks(taskData);
       }
       return task;
@@ -176,7 +176,7 @@ const Statistics = () => {
   }, []);
 
   useEffect(() => {
-    setIsGraphDataLoading(true)
+    setIsGraphDataLoading(true);
     // update graphs
     setGraphData({
       pieData: getPieData(tasks),
@@ -185,8 +185,7 @@ const Statistics = () => {
       timelineData: getTimelineData(tasks),
     });
     setIsGraphDataLoading(false);
-  }, [tasks])
-
+  }, [tasks]);
 
   // define available tabs
   const tabItems: TabItem[] = [

@@ -48,7 +48,7 @@ export function toTask(taskJson: TaskJson): Task {
     "updatedAt",
   ] as KeyOfType<Task, Date>[];
   dateFields.forEach((dateField) => {
-    if (newTask[dateField] === null) {
+    if (newTask[dateField] === null || newTask[dateField] === undefined) {
       return;
     }
     newTask[dateField] = new Date(newTask[dateField]);

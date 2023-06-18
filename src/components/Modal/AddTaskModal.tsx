@@ -231,7 +231,7 @@ const AddTaskModal = ({
               shouldDisableDate={(date) => {
                 return moment(date).isBefore(moment().subtract(1, "day"));
               }}
-              onSelect={(value) => setValue("dueDateTime", value)}
+              onChange={(value) => setValue("dueDateTime", value)}
               value={formValue.dueDateTime}
               errorMessage={dueDateFormError}
             />

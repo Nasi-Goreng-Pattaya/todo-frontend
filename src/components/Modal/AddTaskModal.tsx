@@ -12,10 +12,11 @@ import {
   Toggle,
   DatePickerProps,
   DatePicker,
+  InputProps,
 } from "rsuite";
-import { useState, forwardRef, memo, useRef } from "react";
+import React, { useState, forwardRef, memo, useRef } from "react";
 import FlexboxGridItem from "rsuite/esm/FlexboxGrid/FlexboxGridItem";
-import { Task } from "../../models/Task";
+import { Task, TaskJson, toTask } from "../../models/Task";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../store";
 import { createTask } from "../../features/task/taskSlice";
@@ -26,12 +27,16 @@ import moment from "moment";
 const { StringType, BooleanType, DateType } = Schema.Types;
 const model = Schema.Model({
   title: StringType().isRequired("Task name is required"),
-  content: StringType(),
+  content: StringType().isRequired("Task description is required"),
   priority: StringType().isRequired("Task priority is required"),
   category: StringType().isRequired("Task category is required"),
   hasReminder: BooleanType(),
   dueDateTime: DateType(),
 });
+
+const Textarea = React.forwardRef<HTMLTextAreaElement | null, InputProps>(
+  (props, ref) => <Input {...props} as="textarea" ref={ref} />
+);
 
 const AddTaskModal = ({
   open,
@@ -91,19 +96,7 @@ const AddTaskModal = ({
 
     setTasks((currentTasks) => {
       const newTasks = [...currentTasks];
-      newTasks.push({
-        ...formValue,
-        taskId: (Math.random() * 10000).toFixed(0).toString(),
-        reminderDateTime: null,
-        completedDateTime: null,
-        status: "todo",
-        priority:
-          formValue.priority === "low"
-            ? "low"
-            : formValue.priority === "medium"
-            ? "medium"
-            : "high",
-      });
+      newTasks.push(toTask(taskCreated.payload as TaskJson));
       return newTasks;
     });
 
@@ -157,9 +150,10 @@ const AddTaskModal = ({
           </Form.Group>
           <Form.Group controlId="content">
             <Form.ControlLabel>Description</Form.ControlLabel>
-            <Input
+            <Form.Control
               name="content"
-              as="textarea"
+              accepter={Textarea}
+              //@ts-ignore
               rows={4}
               value={formValue.content}
               onChange={(value) => setValue("content", value)}
@@ -257,4 +251,4 @@ const AddTaskModal = ({
   );
 };
 
-export default memo(AddTaskModal);
+export default AddTaskModal;

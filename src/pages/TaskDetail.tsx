@@ -47,6 +47,8 @@ const styles: { [x: string]: React.CSSProperties } = {
   },
 };
 
+const { StringType, BooleanType, DateType } = Schema.Types;
+
 const Textarea = React.forwardRef<HTMLTextAreaElement | null, InputProps>(
   (props, ref) => <Input {...props} as="textarea" ref={ref} />
 );
@@ -69,6 +71,7 @@ export function TaskDetail() {
   const { taskId } = useParams();
   const [task, setTask] = useState<Task | null>(null);
   const [dueDateFormError, setDueDateFormError] = useState<string>("");
+  const [contentFormError, setContentFormError] = useState<string>("");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
 
   const dispatch = useDispatch<AppDispatch>();
@@ -83,6 +86,12 @@ export function TaskDetail() {
     if (!passValidation) return;
     if (taskId === undefined) return;
     if (task === null) return;
+
+    if (task.content === "") {
+      setContentFormError("Task description is required");
+      return;
+    }
+
     const taskUpdated = await dispatch(
       updateTask({ taskId: taskId, updatedTask: task })
     );
@@ -98,14 +107,25 @@ export function TaskDetail() {
     navigate(-1);
   };
 
-  const handleOnTaskDelete = () => {
+  const handleOnTaskDelete = async () => {
     // if task does not exists, return
     if (!taskId) return;
     // if task exists, request for confirmation
-    dispatch(deleteTask(taskId));
+    const response = await dispatch(deleteTask(taskId));
     // close modal
     setIsDeleteModalOpen(false);
     // navigate back to task list page
+
+    if (response.type === "/deleteTask/rejected") {
+      toaster.push(
+        <Message showIcon type="error">
+          {`${response.payload?.toString()}`}
+        </Message>,
+        { placement: "bottomEnd" }
+      );
+      return;
+    }
+
     navigate(-1);
   };
 
@@ -265,13 +285,20 @@ export function TaskDetail() {
             }
             bordered
           >
-            <Form fluid onSubmit={handleOnSubmit}>
+            <Form
+              fluid
+              onSubmit={handleOnSubmit}
+              //   onError={(err) => {
+              //     console.log(err);
+              //   }}
+            >
               <Form.Group controlId="content">
                 <Form.ControlLabel>Content</Form.ControlLabel>
                 <Form.Control
                   //@ts-ignore
                   rows={5}
                   name="content"
+                  errorMessage={contentFormError}
                   accepter={Textarea}
                   value={task?.content ?? "Loading Task Content..."}
                   onChange={(text) => {
@@ -331,7 +358,7 @@ export function TaskDetail() {
                     <Form.ControlLabel>Priority:</Form.ControlLabel>
                     <Form.Control
                       inline
-                      name="radio"
+                      name="priority"
                       accepter={RadioGroup}
                       value={task?.priority}
                       onChange={(priority) => {

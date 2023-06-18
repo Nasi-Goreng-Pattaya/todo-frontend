@@ -57,8 +57,7 @@ const SingleTask = ({
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const date = moment(task.dueDateTime);
-  const dateString = `
-    ${date.day()}/${date.month()}/${date.year()} ${date.hours()}:${date.minutes()}`;
+  const dateString = `${moment(date).format("DD/MM/YYYY HH:mm")}`;
 
   const changeTaskStatus = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,

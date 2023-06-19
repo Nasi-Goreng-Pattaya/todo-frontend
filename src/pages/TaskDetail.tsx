@@ -116,15 +116,15 @@ export function TaskDetail() {
     setIsDeleteModalOpen(false);
     // navigate back to task list page
 
-    if (response.type === "/deleteTask/rejected") {
-      toaster.push(
-        <Message showIcon type="error">
-          {`${response.payload?.toString()}`}
-        </Message>,
-        { placement: "bottomEnd" }
-      );
-      return;
-    }
+    // if (response.type === "/deleteTask/rejected") {
+    //   toaster.push(
+    //     <Message showIcon type="error">
+    //       {`${response.payload?.toString()}`}
+    //     </Message>,
+    //     { placement: "bottomEnd" }
+    //   );
+    //   return;
+    // }
 
     navigate(-1);
   };

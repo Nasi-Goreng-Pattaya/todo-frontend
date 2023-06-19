@@ -1,1 +1,7 @@
-export const taskCategories = ["Personal", "Work"];
+export const taskCategories = [
+  "Personal",
+  "Study",
+  "Shopping",
+  "Daily",
+  "Work",
+];
